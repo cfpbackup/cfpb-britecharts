@@ -1,6 +1,5 @@
 define(function(require) {
     'use strict';
-    const canvg = require('canvg-browser');
     const {colorSchemas} = require('./color');
     const constants = require('./constants');
     const serializeWithStyles = require('./style');
@@ -44,23 +43,12 @@ define(function(require) {
     function exportChart(d3svg, filename, title) {
         let svgHtml = convertSvgToHtml.call(this, d3svg, title);
         let canvas = createCanvas(this.width(), this.height());
-
-        if(navigator.msSaveOrOpenBlob){
-            let options = {
-                log: false,
-                ignoreMouse: true
-            };
-
-            canvg(canvas, svgHtml, options);
-            return(navigator.msSaveOrOpenBlob && navigator.msSaveOrOpenBlob(canvas.msToBlob(), filename));
-        } else {
-            let img = createImage( svgHtml );
-            img.onload = handleImageLoad.bind(
-                img,
-                canvas,
-                filename
-            );
-        }
+        let img = createImage( svgHtml );
+        img.onload = handleImageLoad.bind(
+            img,
+            canvas,
+            filename
+        );
     }
 
     /**

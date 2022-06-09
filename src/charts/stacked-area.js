@@ -734,11 +734,7 @@ define(function(require){
                 .style('font-size', '12px')
                 .text(tooltipRightText);
 
-            // IE11 give us sometimes a height of 0 when hovering on top of the vertical marker
-            // This hack fixes it for some cases, but it doesn't work in multiline (they won't wrap)
-            // Let's remove this once we stop supporting IE11
-            textHeight = elementText.node().getBBox().height ? elementText.node().getBBox().height : textHeight;
-
+            textHeight = elementText.node().getBBox().height;
             tooltipHeight += textHeight + tooltipTextLinePadding;
             // update the width if it exists because IE renders the elements
             // too slow and cant figure out the width?
@@ -797,10 +793,7 @@ define(function(require){
                 .style('font-weight', '800')
                 .text(tooltipRightText);
 
-            // IE11 give us sometimes a height of 0 when hovering on top of the vertical marker
-            // This hack fixes it for some cases, but it doesn't work in multiline (they won't wrap)
-            // Let's remove this once we stop supporting IE11
-            textHeight = elementText.node().getBBox().height ? elementText.node().getBBox().height : textHeight;
+            textHeight = elementText.node().getBBox().height;
 
             tooltipHeight += textHeight + tooltipTextLinePadding;
             // update the width if it exists because IE renders the elements
