@@ -911,16 +911,12 @@ define(function(require) {
             svg.select('.title-group').selectAll('g').remove();
             svg.select('.title-group').selectAll('text').remove();
 
-            const ua = window.navigator.userAgent;
-            const isIE = ua.indexOf( 'Edge' ) > -1 || ua.indexOf( 'MSIE' ) > -1;
-            // for EXPORT ONLY!
-            const xPatch = isIE && isPrintMode ? 0 : 0;
             const titleMarginTop = 10;
             if(labelsFocusTitle && focusCount) {
                 let focusTitle = `${labelsFocusTitle} ${focusCount.toLocaleString()}`;
                 let w = textHelper.getTextWidth( focusTitle, labelsSizeChild, 'sans-serif' );
                 const moPadding = isPrintMode ? 100 : 40;
-                const availfocusTitleAreaWidth = margin.left + focusWidth - moPadding - xPatch;
+                const availfocusTitleAreaWidth = margin.left + focusWidth - moPadding;
                 let wasTrimmed = false;
                 while(w > availfocusTitleAreaWidth){
                     labelsFocusTitle = labelsFocusTitle.slice(0, -1);
@@ -945,12 +941,7 @@ define(function(require) {
                     .attr('font-size', labelsSizeChild)
                     .attr( 'font-weight', 600 );
 
-                let w1 = span1.node().getBoundingClientRect().width + 10;
-                if ( isPrintMode && isIE ) {
-                    // wasTrimmed
-                    w1 += 40;
-                }
-
+                const w1 = span1.node().getBoundingClientRect().width + 10;
                 let shiftFocus = focusWidth - w1 - 5;
 
                 focusTitleGroup.attr( 'x', shiftFocus );
@@ -961,12 +952,10 @@ define(function(require) {
                 const ltc = labelsTotalCount.toLocaleString();
                 const compCountTxt = labelsTotalText + ' ' + ltc;
                 let cw = textHelper.getTextWidth( compCountTxt, labelsSizeChild, 'Karla, sans-serif');
-                let printPadding = isPrintMode && isIE ? 10 : 0;
 
-                const ieTweak = isIE ? 5 :0;
                 const complaintTotalGroup = svg.select( '.title-group' ).append( 'text' )
                     .text( null )
-                    .attr( 'x', chartWidth - cw - printPadding - 10 - ieTweak - 5 )
+                    .attr( 'x', chartWidth - cw - 15 )
                     .attr( 'y', titleMarginTop );
 
                 complaintTotalGroup.append( 'tspan' )
