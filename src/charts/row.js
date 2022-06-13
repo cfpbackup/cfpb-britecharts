@@ -969,7 +969,7 @@ define(function(require) {
                     .attr( 'font-size', labelsSizeChild )
                     .attr( 'font-weight', 600 );
 
-                const titlexPos = width > 600 ? chartWidth - complaintTotalGroup.node().getBoundingClientRect().width - 10 - printPadding :
+                const titlexPos = width > 600 ? chartWidth - complaintTotalGroup.node().getBoundingClientRect().width - 10 :
                     chartWidth - complaintTotalGroup.node().getBoundingClientRect().width - 10;
 
                 complaintTotalGroup.attr( 'x', titlexPos )

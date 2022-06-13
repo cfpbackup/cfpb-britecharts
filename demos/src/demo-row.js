@@ -718,8 +718,7 @@ function appendExportDetails(chart, container, scope) {
         .attr('fill','grey')
         .attr( 'width', detailWidth );
 
-    const topPad = isIE() ? 0 : paddingTop;
-    const dr = appendDateRange( detailContainer, dateRange, contentWidth, topPad );
+    const dr = appendDateRange( detailContainer, dateRange, contentWidth, paddingTop );
     elems.push( dr );
 
     const d = appendExportDate( detailContainer, contentWidth, sumHeight( elems ) );
@@ -871,10 +870,6 @@ function formatDateView(dateIn){
  */
 export const appendTextElement = ( container, title, text, width, padTop = 30 ) => {
     const padLeft = 20;
-
-    if ( isIE() ) {
-        padTop += 20;
-    }
 
     const textContainer = container.append( 'g' )
         .classed( 'text-group', true )
@@ -1040,12 +1035,6 @@ export const appendFilterDetails = ( detailContainer, filters, width, padTop ) =
 
 function processFilters(filters){
     return filters;
-}
-
-
-function isIE(){
-    const ua = window.navigator.userAgent;
-    return ua.indexOf( 'Edge' ) > -1 || ua.indexOf( 'MSIE' ) > -1;
 }
 
 // Show charts if container available
