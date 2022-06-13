@@ -1999,15 +1999,6 @@ camelcase@^5.0.0, camelcase@^5.3.1:
   resolved "https://registry.yarnpkg.com/camelcase/-/camelcase-5.3.1.tgz#e3c9b31569e106811df242f715725a1f4c494320"
   integrity sha512-L28STB170nwWS63UjtlEOE3dldQApaJXZkOI1uMFfzf3rRuPegHaHesyee+YxQ+W6SvRDQV6UrdOdRiR153wJg==
 
-canvg-browser@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/canvg-browser/-/canvg-browser-1.0.0.tgz#c63cb5a9e7a0c70698a9c87783473e60915ea483"
-  integrity sha1-xjy1qeegxwaYqch3g0c+YJFepIM=
-  dependencies:
-    rgbcolor "0.0.4"
-    stackblur "^1.0.0"
-    xmldom "^0.1.22"
-
 cardinal@0.4.0:
   version "0.4.0"
   resolved "https://registry.yarnpkg.com/cardinal/-/cardinal-0.4.0.tgz#7d10aafb20837bde043c45e43a0c8c28cdaae45e"
@@ -8944,11 +8935,6 @@ rfdc@^1.1.4:
   resolved "https://registry.yarnpkg.com/rfdc/-/rfdc-1.1.4.tgz#ba72cc1367a0ccd9cf81a870b3b58bd3ad07f8c2"
   integrity sha512-5C9HXdzK8EAqN7JDif30jqsBzavB7wLpaubisuQIGHWf2gUXSpzy6ArX/+Da8RjFpagWsCn+pIgxTMAmKw9Zug==
 
-rgbcolor@0.0.4:
-  version "0.0.4"
-  resolved "https://registry.yarnpkg.com/rgbcolor/-/rgbcolor-0.0.4.tgz#ca04615a2d03eb61e49f2a75f239a46fb77d8b1d"
-  integrity sha1-ygRhWi0D62Hknyp18jmkb7d9ix0=
-
 rimraf@2, rimraf@^2.5.4, rimraf@^2.6.0, rimraf@^2.6.1, rimraf@^2.6.3:
   version "2.7.1"
   resolved "https://registry.yarnpkg.com/rimraf/-/rimraf-2.7.1.tgz#35797f13a7fdadc566142c29d4f07ccad483e3ec"
@@ -9676,11 +9662,6 @@ ssri@^6.0.1:
   integrity sha512-3Wge10hNcT1Kur4PDFwEieXSCMCJs/7WvSACcrMYrNp+b8kDL1/0wJch5Ni2WrtwEa2IO8OsVfeKIciKCDx/QA==
   dependencies:
     figgy-pudding "^3.5.1"
-
-stackblur@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/stackblur/-/stackblur-1.0.0.tgz#b407a7e05c93b08d66883bb808d7cba3a503f12f"
-  integrity sha1-tAen4FyTsI1miDu4CNfLo6UD8S8=
 
 static-extend@^0.1.1:
   version "0.1.2"
@@ -10950,11 +10931,6 @@ xmlcreate@^2.0.3:
   version "2.0.3"
   resolved "https://registry.yarnpkg.com/xmlcreate/-/xmlcreate-2.0.3.tgz#df9ecd518fd3890ab3548e1b811d040614993497"
   integrity sha512-HgS+X6zAztGa9zIK3Y3LXuJes33Lz9x+YyTxgrkIdabu2vqcGOWwdfCpf1hWLRrd553wd4QCDf6BBO6FfdsRiQ==
-
-xmldom@^0.1.22:
-  version "0.1.31"
-  resolved "https://registry.yarnpkg.com/xmldom/-/xmldom-0.1.31.tgz#b76c9a1bd9f0a9737e5a72dc37231cf38375e2ff"
-  integrity sha512-yS2uJflVQs6n+CyjHoaBmVSqIDevTAWrzMmjG1Gc7h1qQ7uVozNhEPJAwZXWyGQ/Gafo3fCwrcaokezLPupVyQ==
 
 xmlhttprequest-ssl@~1.5.4:
   version "1.5.5"
