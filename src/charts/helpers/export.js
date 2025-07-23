@@ -26,7 +26,7 @@ define(function(require) {
         chartBackground: '#ffffff',
         imageSourceBase: 'data:image/svg+xml;base64,',
         titleFontSize: '36px',
-        titleFontFamily: '\'Avenir Next\', sans-serif',
+        titleFontFamily: '\'Source Sans 3 Variable\', sans-serif',
         titleTopOffset: 25,
         titleLeftOffset: 10,
         get styleBackgroundString () {
