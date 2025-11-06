@@ -198,6 +198,7 @@ define(function (require) {
         function exports(_selection) {
             _selection.each(function (_data) {
                 const printWidth = isPrintMode ? 250 : 0;
+
                 chartWidth = width - margin.left - margin.right - printWidth;
                 chartHeight = height - margin.top - margin.bottom;
                 data = cleanData(_data);
@@ -293,7 +294,7 @@ define(function (require) {
             container
                 .append('g').classed('chart-group', true);
 
-            if(isPrintMode) {
+            if (isPrintMode) {
                 container
                     .append( 'g' ).classed( 'legend-group', true );
             }
@@ -352,7 +353,7 @@ define(function (require) {
             const gr = data.map(getGroup);
             const group = uniq(gr);
 
-            for(let i=0; i< group.length; i++){
+            for (let i=0; i< group.length; i++){
                 categoryColorMap[group[i]] = colorSchema[i];
             }
 
@@ -404,7 +405,8 @@ define(function (require) {
          */
         function wrapTextWithEllipses(text, containerWidth) {
             const yAxisLineWrapLimit = 2;
-            const lineHeight = .8;
+            const lineHeight = 0.8;
+
             textHelper.wrapTextWithEllipses(text, containerWidth, -10, yAxisLineWrapLimit, lineHeight);
         }
 
@@ -452,13 +454,13 @@ define(function (require) {
 
 
         function drawLegend() {
-            if(!isPrintMode)
+            if (!isPrintMode)
                 return;
             const pos = Number.parseInt(chartWidth) + Number.parseInt(margin.right);
 
             tooltipTextContainer = svg.selectAll('.legend-group')
                 .append('g')
-                .attr('transform', 'translate(' + pos + ", -30)")
+                .attr('transform', 'translate(' + pos + ', -30)')
                 .classed('tooltip-text', true);
 
             tooltipBody = tooltipTextContainer
@@ -468,6 +470,7 @@ define(function (require) {
                 .style('fill', textFillColor);
 
             const keys = [ ...new Set( data.map( o => o.group ) ) ].reverse();
+
             keys.forEach(updateTopicContent);
         }
 
@@ -730,7 +733,7 @@ define(function (require) {
                 .attr('y', (d) => yScale2(getGroup(d)))
                 .attr('height', yScale2.bandwidth())
                 .attr('fill', (({group}) => categoryColorMap[group]))
-                .attr('fill-opacity', .3);
+                .attr('fill-opacity', 0.3);
 
             let rows = rowJoin
                 .enter()
@@ -753,7 +756,8 @@ define(function (require) {
                     width += 5;
 
                     const textWidth = textHelper.getTextWidth(getCountLabel(getCount(d) ) + format(getValue(d)) + '%', 16);
-                    if(width + textWidth > chartWidth){
+
+                    if (width + textWidth > chartWidth){
                         return width - textWidth - 10;
                     }
                     return width;
@@ -796,7 +800,7 @@ define(function (require) {
                     .ease(ease)
                     .tween('attr.width', horizontalRowsTween);
 
-                if(isStacked) {
+                if (isStacked) {
                     rowsOverall.style( 'opacity', rowOpacity )
                         .transition()
                         .delay( ( _, i ) => animationDelays[ i ] )
@@ -813,17 +817,17 @@ define(function (require) {
                     .tween('attr.width', horizontalRowsTween);
             } else {
                 rows.attr( 'width', ( d ) => {
-                    if(isStacked){
+                    if (isStacked){
                         return xScale( getScaledValue(d) );
                     }
                     return xScale( getValue( d ) );
                 } );
 
-                if(isStacked) {
+                if (isStacked) {
                     rowsOverall.attr( 'width', ( d ) => xScale( getParentValue( d ) ) );
                 }
                 rowsStriped.attr('width', (d) => {
-                    if(isStacked) {
+                    if (isStacked) {
                         return xScale( getScaledValue( d ) );
                     }
                     return xScale( getValue( d ) );
@@ -967,19 +971,20 @@ define(function (require) {
         function rowHoverOver(d, i) {
             let ind = null;
             let layerName = '';
-            if(this) {
+
+            if (this) {
                 layerName = d3Selection.select( this.parentNode ).attr( 'class' );
                 ind = layerName.replace('layer layer-', '');
             }
 
             // find the index, sometimes we mouse over the X (visibility toggle)
             // the value isn't found and the X disappears.
-            if( typeof d === 'string' ) {
+            if ( typeof d === 'string' ) {
                 ind = getIndex(d);
             }
-            if(parseInt(ind) > -1) {
+            if (parseInt(ind) > -1) {
                 d3Selection.select( containerRoot ).select( '.tick svg.visibility-' + ind ).attr( 'opacity', 1 );
-                d3Selection.select( containerRoot ).select( 'g .layer-' + ind + ' .bg-hover' ).attr( 'fill-opacity', .3 );
+                d3Selection.select( containerRoot ).select( 'g .layer-' + ind + ' .bg-hover' ).attr( 'fill-opacity', 0.3 );
             }
         }
 
@@ -988,15 +993,16 @@ define(function (require) {
             // we should find the index of the currently hovered over row
             let ind = null;
             let layerName = '';
-            if(this) {
+
+            if (this) {
                 layerName = d3Selection.select( this.parentNode ).attr( 'class' );
                 ind = layerName.replace('layer layer-', '');
             }
 
-            if( typeof d === 'string' ) {
+            if ( typeof d === 'string' ) {
                 ind = getIndex(d);
             }
-            if(parseInt(ind) > -1) {
+            if (parseInt(ind) > -1) {
                 d3Selection.select( containerRoot ).select( '.tick svg.visibility-' + ind ).attr( 'opacity', 0 );
                 d3Selection.select( containerRoot ).select( 'g .layer-' + ind + ' .bg-hover' ).attr( 'fill-opacity', 0 );
             }
@@ -1013,6 +1019,7 @@ define(function (require) {
 
             let i = isStacked ? d3Interpolate.interpolateRound( 0, xScale( getScaledValue( d ) ) )
                 : d3Interpolate.interpolateRound(0, xScale(getValue(d)));
+
             return function (t) {
                 node.attr('width', i(t))
                     .style('opacity', j(t));

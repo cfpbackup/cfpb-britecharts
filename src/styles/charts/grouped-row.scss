@@ -1,21 +1,18 @@
-@import "../helpers/_variables.scss";
+@import "../helpers/_variables";
 
 .grouped-row {
-
     // Axes
     .x-axis-group path {
         display: none;
     }
-    .y-axis-group path {
-
-    }
-
+    
     .y-axis-group {
         .tick {
             text {
                 font-size: 14px;
             }
         }
+
         .adjust-upwards {
             transform: translate(0, -10px);
         }

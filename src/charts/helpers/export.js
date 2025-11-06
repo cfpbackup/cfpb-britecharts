@@ -44,6 +44,7 @@ define(function(require) {
         let svgHtml = convertSvgToHtml.call(this, d3svg, title);
         let canvas = createCanvas(this.width(), this.height());
         let img = createImage( svgHtml );
+
         img.onload = handleImageLoad.bind(
             img,
             canvas,
@@ -108,7 +109,7 @@ define(function(require) {
         img.src = `${config.imageSourceBase}${ b64EncodeUnicode(svgHtml) }`;
 
         return img;
-    };
+    }
 
     /**
      * Draws image on canvas

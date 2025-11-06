@@ -265,6 +265,7 @@ define(function(require){
                     dataRange
                 } = cleanData(_data));
                 const printWidth = isPrintMode ? tooltipWidth : 0;
+
                 chartWidth = width - margin.left - margin.right - printWidth;
                 chartHeight = height - margin.top - margin.bottom;
 
@@ -290,7 +291,7 @@ define(function(require){
 
                 addTouchEvents();
 
-                if(initializeVerticalMarker){
+                if (initializeVerticalMarker){
                     initVerticalMarker();
                 }
             });
@@ -443,7 +444,7 @@ define(function(require){
             container
               .append('g').classed('chart-group', true);
 
-            if(isPrintMode) {
+            if (isPrintMode) {
                 container
                     .append( 'g' ).classed( 'legend-group', true );
             }
@@ -548,7 +549,7 @@ define(function(require){
                 return d;
             });
 
-            if(dataRange) {
+            if (dataRange) {
                 dataRange = dataRange.map( ( d ) => {
                     d.date = new Date( d.date );
                     return d;
@@ -692,7 +693,7 @@ define(function(require){
                 .style('opacity', (d)=>{
                     // code to make sure this is compatible with britecharts, vs
                     // cfpb customizations
-                    if(d.hasOwnProperty('show')) {
+                    if (d.hasOwnProperty('show')) {
                         return d.show ? 1 : 0;
                     }
                     // show by default
@@ -700,8 +701,8 @@ define(function(require){
                 })
                 .style('stroke-dasharray', (d)=>{
                     // cfpb custom
-                    if(d.hasOwnProperty('show')) {
-                        return d.dashed ? [.5, 4] : false;
+                    if (d.hasOwnProperty('show')) {
+                        return d.dashed ? [0.5, 4] : false;
                     }
                     // line not dashed by default
                     return false;
@@ -718,7 +719,7 @@ define(function(require){
          */
         function drawStackedAreas() {
             // define the area
-            if(!dataRange)
+            if (!dataRange)
                 return;
             const area = d3Shape.area()
                 .curve(curveMap[lineCurve])
@@ -729,20 +730,21 @@ define(function(require){
              // add the area
             const areaGroup = svg.select('.chart-group').append('g')
                 .attr('class', 'area');
-            areaGroup.append("path")
+
+            areaGroup.append('path')
                 .data([dataRange])
-                .attr("class", "area")
-                .attr("d", area);
+                .attr('class', 'area')
+                .attr('d', area);
         }
 
         function drawLegend() {
-            if(!isPrintMode)
+            if (!isPrintMode)
                 return;
             const pos = Number.parseInt(chartWidth) + Number.parseInt(margin.right);
 
             tooltipTextContainer = svg.selectAll('.legend-group')
                 .append('g')
-                .attr('transform', 'translate(' + pos + ", 0)")
+                .attr('transform', 'translate(' + pos + ', 0)')
                 .classed('tooltip-text', true);
 
             tooltipTitle = tooltipTextContainer
@@ -772,24 +774,25 @@ define(function(require){
             let visibleTopics;
 
             // CFPB backwards compatibility with default britecharts data
-            if(dataByTopic[0].hasOwnProperty('show')) {
+            if (dataByTopic[0].hasOwnProperty('show')) {
                 visibleTopics = dataByTopic.filter(o => o.show);
             } else {
                 visibleTopics = dataByTopic;
             }
 
-            for(let i=0; i< visibleTopics.length; i++){
+            for (let i=0; i< visibleTopics.length; i++){
                 visibleTopics[i].sum = visibleTopics[i].dates.reduce((a, b)=>a + b.value, 0);
             }
 
             visibleTopics.map(o=>{
-                if(o.sum % 1 !== 0){
+                if (o.sum % 1 !== 0){
                     o.sum = parseFloat(o.sum).toFixed(2);
                 }
             });
             const min = visibleTopics[0].dates[0];
             const last = visibleTopics[0].dates.length - 1;
             const max = visibleTopics[0].dates[last];
+
             updateTitle(min, max);
             visibleTopics.forEach(updateTopicContent);
         }
@@ -801,6 +804,7 @@ define(function(require){
          */
         function formatDate(date) {
             const d = new Date(date);
+
             return d.toLocaleDateString();
         }
 
@@ -812,6 +816,7 @@ define(function(require){
          */
         function updateTitle(min, max) {
             const title = formatDate(min.date) + ' - ' + formatDate(max.date);
+
             tooltipTitle.text(title);
         }
 

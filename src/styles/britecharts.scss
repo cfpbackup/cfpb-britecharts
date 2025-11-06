@@ -1,26 +1,26 @@
 // Base Styles
-@import "base/_reset.scss";
-@import "base/_typography.scss";
+@import "base/_reset";
+@import "base/_typography";
 
 // Helpers
-@import "helpers/_variables.scss";
-@import "helpers/loadingStates.scss";
+@import "helpers/_variables";
+@import "helpers/loadingStates";
 
 // Common Elements
-@import "common.scss";
+@import "common";
 
 // Charts
-@import "charts/bar.scss";
-@import "charts/donut.scss";
-@import "charts/line.scss";
-@import "charts/row.scss";
-@import "charts/scatter-plot.scss";
-@import "charts/sparkline.scss";
-@import "charts/stacked-area.scss";
-@import "charts/stacked-bar.scss";
-@import "charts/grouped-bar.scss";
-@import "charts/grouped-row.scss";
-@import "charts/step.scss";
-@import "charts/brush.scss";
-@import "charts/bullet.scss";
-@import "charts/cfpb-barcharts.scss";
+@import "charts/bar";
+@import "charts/donut";
+@import "charts/line";
+@import "charts/row";
+@import "charts/scatter-plot";
+@import "charts/sparkline";
+@import "charts/stacked-area";
+@import "charts/stacked-bar";
+@import "charts/grouped-bar";
+@import "charts/grouped-row";
+@import "charts/step";
+@import "charts/brush";
+@import "charts/bullet";
+@import "charts/cfpb-barcharts";

@@ -40,3 +40,7 @@ demos/build
 
 docs
 stats
+node_modules/
+dist/
+docs/
+.eslintcache

@@ -95,7 +95,7 @@ define(function(require) {
             pctChangeLabelSize = 10,
             padding = 0.1,
             paddingBetweenGroups = 10,
-            outerPadding = .3,
+            outerPadding = 0.3,
             xAxis, yAxis,
             yAxisPaddingBetweenChart = 20,
             yAxisLineWrapLimit = 1,
@@ -159,7 +159,7 @@ define(function(require) {
                     pctLabel = '  | ' + pctOfSet + '%';
                 }
 
-                if(Number(value) === 1) {
+                if (Number(value) === 1) {
                     // localize, remove the s
                     // (complaint vs complaints)
                     labelsSuffix = labelsSuffix.replace( /s$/, '' );
@@ -210,6 +210,7 @@ define(function(require) {
         function exports(_selection) {
             _selection.each(function(_data) {
                 const sideMargins = margin.left + margin.right;
+
                 chartWidth = width > 600 ? width - sideMargins - (yAxisPaddingBetweenChart * 1.2) - 100 :
                     width - sideMargins;
 
@@ -286,7 +287,7 @@ define(function(require) {
             const exGroups = getExpandedGroups(values);
             const retAlpha = (chartHeight - (n - 1) * padding * chartHeight / n - 2 * outerPadding * chartHeight / n) / total;
 
-            if(exGroups.length === 0)
+            if (exGroups.length === 0)
                 return retAlpha;
 
             const squishScale = d3Scale.scalePow()
@@ -296,6 +297,7 @@ define(function(require) {
 
             const scale = squishScale(n);
             const diff = isPrintMode ? scale * 2 : scale;
+
             return retAlpha - diff;
         }
 
@@ -317,6 +319,7 @@ define(function(require) {
                 var op = outerPadding * chartHeight / n,
                     p = padding * chartHeight / n;
                 let retVal = op + d3.sum(values.slice(0, i), value) * alpha + i * p + w(i) / 2;
+
                 groupIndices.forEach(g=>{
                     // space above group
                     if ( g[ 0 ] > 1 &&i >= g[ 0 ] ) {
@@ -355,10 +358,12 @@ define(function(require) {
 
         function getGroupIndices(parents, data){
             let groups = [];
+
             parents.forEach(name=>{
                 const points = data.map((o, i)=>{
                     return o.name === name || o.parent === name ? i : null
                 }).filter(o=> {return o;});
+
                 groups.push(points);
             });
             return groups;
@@ -463,6 +468,7 @@ define(function(require) {
          */
         function getFontSize(d){
             const e = isParent(d);
+
             return e ? `${labelsSize}px` : `${labelsSizeChild}px`;
         }
 
@@ -473,8 +479,9 @@ define(function(require) {
          * @private
          */
         function wrapTextWithEllipses(text, containerWidth) {
-            if(wrapLabels) {
-                const lineHeight = yAxisLineWrapLimit > 1 ? .8 : 1.2;
+            if (wrapLabels) {
+                const lineHeight = yAxisLineWrapLimit > 1 ? 0.8 : 1.2;
+
                 textHelper.wrapTextWithEllipses(text, containerWidth, 0,
                     yAxisLineWrapLimit, lineHeight);
             }
@@ -488,6 +495,7 @@ define(function(require) {
                 let group = elem.append('svg')
                     .attr('class', (d) => {
                     const item = getItem(d)
+
                     return item.splitterText ? 'hidden' :
                             'visibility visibility-' + getIndex(d);
                     })
@@ -527,6 +535,7 @@ define(function(require) {
                         const e = data.find((o)=>{
                             return o.parent === d
                         });
+
                         return e ? `translate(${yAxisPaddingBetweenChart-5}, 2.5) rotate(180)` : `translate(${yAxisPaddingBetweenChart-15}, -2.5)`;
                     } )
                     .attr( 'points', function( d ) {
@@ -540,6 +549,7 @@ define(function(require) {
                         const e = data.find((o)=>{
                             return o.name === d && o.hasChildren
                         });
+
                         return e ? 1 : 0;
                     } );
             } );
@@ -549,9 +559,11 @@ define(function(require) {
             const bars = svg.selectAll('.row-wrapper');
             const num = Number(bars.size()) - 1;
             const lastBar = svg.select('.row_' + num).select('.bg-hover');
-            if(lastBar._groups[0] && lastBar._groups[0][0]) {
+
+            if (lastBar._groups[0] && lastBar._groups[0][0]) {
                 const pos = Number( lastBar.attr( 'y' ) );
                 const height = pos + Number( lastBar.attr( 'height' ) ) + 40;
+
                 svg.select( 'line.pct-separator' ).attr( 'y2', height );
                 svg.select( '.export-wrapper' ).attr( 'height', height );
                 svg.attr( 'height', height );
@@ -565,6 +577,7 @@ define(function(require) {
          */
         function drawAxis() {
             let labelsBoxWidth = margin.left;
+
             svg.select('.x-axis-group.axis')
                 .attr('transform', `translate(0, ${chartHeight})`)
                 .call(xAxis);
@@ -573,7 +586,7 @@ define(function(require) {
                 .call(yAxis);
 
             // adding the eyeball
-            if(!isPrintMode) {
+            if (!isPrintMode) {
                 svg.selectAll( '.y-axis-group.axis .tick' )
                     .call( addVisibilityToggle );
                 labelsBoxWidth = margin.left - yAxisPaddingBetweenChart - 30;
@@ -605,7 +618,7 @@ define(function(require) {
 
 
             // adding the down arrow for parent elements
-            if(!isPrintMode) {
+            if (!isPrintMode) {
                 svg.selectAll( '.y-axis-group.axis .tick' )
                     .classed( 'expandable', function( d ) {
                         return isExpandable(data, d);
@@ -717,7 +730,8 @@ define(function(require) {
                 } );
 
             const backgroundRows = d3Selection.select( '.chart-group .bg' );
-            if(enableLabels && backgroundRows.node()) {
+
+            if (enableLabels && backgroundRows.node()) {
                 const bgWidth = backgroundRows.node().getBBox().x || backgroundRows.node().getBoundingClientRect().width;
 
                 bargroups.append( 'text' )
@@ -733,12 +747,14 @@ define(function(require) {
                         const barWidth = xScale( d.value );
                         const labels = bargroups.selectAll( 'text' );
                         const textWidth = labels._groups[ i ][ 0 ].getComputedTextLength() + 10;
+
                         return ( bgWidth > 0 && bgWidth - barWidth < textWidth ) ? '#FFF' : '#000';
                     } )
                     .attr( 'transform', ( d, i ) => {
                         const barWidth = d.parentCount ? xScale( d.parentCount ) : xScale( d.value );
                         const labels = bargroups.selectAll( 'text' );
                         const textWidth = labels._groups[ i ][ 0 ].getComputedTextLength() + 10;
+
                         if ( bgWidth > 0 && bgWidth - barWidth < textWidth ) {
                             return `translate(-${textWidth}, 0)`;
                         }
@@ -777,7 +793,7 @@ define(function(require) {
                     .attr('font-size', getFontSize)
             }
 
-            if(enableYAxisRight && enableLabels && width > 600) {
+            if (enableYAxisRight && enableLabels && width > 600) {
                 const gunit  = bargroups
                     .append( 'g' )
                     .attr( 'transform', `translate(${chartWidth + 10}, 0)` )
@@ -789,7 +805,7 @@ define(function(require) {
                     .attr('font-size', getFontSize)
                     .attr('font-weight', '600')
                     .style( 'fill', ( d ) => {
-                        if(d.pctChange === 0 || isNaN(d.pctChange)) {
+                        if (d.pctChange === 0 || isNaN(d.pctChange)) {
                             return '#919395';
                         }
                         return d.pctChange > 0 ? upArrowColor : downArrowColor;
@@ -800,7 +816,8 @@ define(function(require) {
                 gunit.append( 'polygon' )
                     .attr( 'transform', ( d ) => {
                         const yPos = _labelsHorizontalY( d );
-                        if(isParent(d)) {
+
+                        if (isParent(d)) {
                             return d.pctChange < 0 ? `translate(65, ${yPos+5}) rotate(180) scale(1.5)` :
                                 `translate(50, ${yPos - 15}) scale(1.5)`;
                         }
@@ -818,6 +835,7 @@ define(function(require) {
                     // just hide the percentages if the number is bogus
                     .attr( 'fill-opacity', function( d ) {
                         const pctChange = d.pctChange;
+
                         return ( isNaN( pctChange ) || pctChange === 0 ) ? 0.0 : 1.0;
                     } );
             }
@@ -861,7 +879,7 @@ define(function(require) {
 
                 drawHorizontalRows(rows);
 
-                if(data && data[0] && data[0].parentCount){
+                if (data && data[0] && data[0].parentCount){
                     svg.select('.chart-group').append('line')
                         .classed('focus-separator', true)
                         .attr('y1', -10)
@@ -903,23 +921,27 @@ define(function(require) {
         function drawChartTitleLabels() {
             // chart group
             // adding separator line
-            if(!(data && data[0]))
+            if (!(data && data[0]))
                 return;
 
             let focusWidth = data[0].parentCount ? xScale(data[0].parentCount) : 1;
+
             focusWidth = focusWidth > 0 ? focusWidth : 1;
             const focusCount = data[0].parentCount;
+
             svg.select('.title-group').selectAll('g').remove();
             svg.select('.title-group').selectAll('text').remove();
 
             const titleMarginTop = 10;
-            if(labelsFocusTitle && focusCount) {
+
+            if (labelsFocusTitle && focusCount) {
                 let focusTitle = `${labelsFocusTitle} ${focusCount.toLocaleString()}`;
                 let w = textHelper.getTextWidth( focusTitle, labelsSizeChild, 'sans-serif' );
                 const moPadding = isPrintMode ? 100 : 40;
                 const availfocusTitleAreaWidth = margin.left + focusWidth - moPadding;
                 let wasTrimmed = false;
-                while(w > availfocusTitleAreaWidth){
+
+                while (w > availfocusTitleAreaWidth){
                     labelsFocusTitle = labelsFocusTitle.slice(0, -1);
                     wasTrimmed = true;
                     focusTitle = `${labelsFocusTitle}... ${focusCount.toLocaleString()}`;
@@ -949,7 +971,7 @@ define(function(require) {
 
             }
 
-            if(labelsTotalCount) {
+            if (labelsTotalCount) {
                 const ltc = labelsTotalCount.toLocaleString();
                 const compCountTxt = labelsTotalText + ' ' + ltc;
                 let cw = textHelper.getTextWidth( compCountTxt, labelsSizeChild, 'Karla, sans-serif');
@@ -976,7 +998,7 @@ define(function(require) {
                 complaintTotalGroup.attr( 'x', titlexPos )
             }
 
-            if(labelsInterval && width > 600) {
+            if (labelsInterval && width > 600) {
                 svg.select( '.title-group' )
                     .append( 'text' )
                     .text( `Change in past ${labelsInterval}` )
@@ -993,7 +1015,7 @@ define(function(require) {
          * @private
          */
         function handleMouseOver(e, d, rowList, chartWidth, chartHeight) {
-            if(d.splitterText)
+            if (d.splitterText)
                 return;
 
             dispatcher.call('customMouseOver', e, d, d3Selection.mouse(e), [chartWidth, chartHeight]);
@@ -1006,12 +1028,13 @@ define(function(require) {
 
         function rowHoverOver(d, i) {
             // early exit if it's a separator row
-            if(d.splitterText)
+            if (d.splitterText)
                 return;
             // eyeball fill-opacity 1
             // we should find the index of the currently hovered over row
             let ind = i;
-            if(typeof d.name === 'string' || typeof d === 'string') {
+
+            if (typeof d.name === 'string' || typeof d === 'string') {
                 ind = d.name ? getIndex( d.name ) : getIndex( d );
             }
 
@@ -1021,12 +1044,13 @@ define(function(require) {
 
         function rowHoverOut(d, i) {
             // early exit if it's a separator row
-            if(d.splitterText)
+            if (d.splitterText)
                 return;
             // eyeball fill-opacity 0
             // we should find the index of the currently hovered over row
             let ind = i;
-            if(typeof d.name === 'string' || typeof d === 'string') {
+
+            if (typeof d.name === 'string' || typeof d === 'string') {
                 ind = d.name ? getIndex( d.name ) : getIndex( d );
             }
 
@@ -1052,7 +1076,7 @@ define(function(require) {
          */
         function handleMouseMove(e, d, chartWidth, chartHeight) {
             // early exit if it's a separator row
-            if(d.splitterText)
+            if (d.splitterText)
                 return;
             dispatcher.call('customMouseMove', e, d, d3Selection.mouse(e), [chartWidth, chartHeight]);
         }
@@ -1064,7 +1088,7 @@ define(function(require) {
          */
         function handleMouseOut(e, d, rowList, chartWidth, chartHeight) {
             // early exit if it's a separator row
-            if(d.splitterText)
+            if (d.splitterText)
                 return;
             dispatcher.call('customMouseOut', e, d, d3Selection.mouse(e), [chartWidth, chartHeight]);
 

@@ -192,7 +192,7 @@ define(function (require) {
                     })
                     .on('click',  function(d) {
                         handleCustomClick(this, d);
-                    });;
+                    });
             }
 
             svg.selectAll('.bar')

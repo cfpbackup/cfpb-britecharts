@@ -10,7 +10,6 @@ RUN yarn install
 COPY .babelrc .
 COPY webpack.* ./
 
-COPY Gruntfile.js .
 COPY GETTINGSTARTED.md .
 COPY README.md .
 COPY src src

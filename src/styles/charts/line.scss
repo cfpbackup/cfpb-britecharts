@@ -1,4 +1,4 @@
-@import "../helpers/_variables.scss";
+@import "../helpers/_variables";
 
 $line-width: 2;
 
@@ -6,6 +6,7 @@ $line-width: 2;
     .area {
         fill: $grey-200;
     }
+
     // Class for data point markers
     .data-point-mark {
         fill: $white;
@@ -29,6 +30,7 @@ $line-width: 2;
     .y.axis path {
         display: none;
     }
+
     .month-axis path {
         display: none;
     }

@@ -105,7 +105,7 @@ module.exports = (function() {
                 });
 
                 return result;
-            };
+            }
 
             return serializeWithStyles;
         }

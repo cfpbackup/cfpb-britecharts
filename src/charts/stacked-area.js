@@ -235,6 +235,7 @@ define(function(require){
         function exports(_selection) {
             _selection.each(function(_data) {
                 const printWidth = isPrintMode ? tooltipWidth : 0;
+
                 chartWidth = width - margin.left - margin.right - printWidth;
                 chartHeight = height - margin.top - margin.bottom;
                 data = cleanData(_data);
@@ -258,7 +259,7 @@ define(function(require){
                     addMouseEvents();
                 }
 
-                if(initializeVerticalMarker){
+                if (initializeVerticalMarker){
                     initVerticalMarker();
                 }
             });
@@ -400,7 +401,7 @@ define(function(require){
             container
               .append('g').classed('chart-group', true);
 
-            if(isPrintMode) {
+            if (isPrintMode) {
                 container
                     .append( 'g' ).classed( 'legend-group', true );
             }
@@ -683,6 +684,7 @@ define(function(require){
          */
         function formatDate(date) {
             const d = new Date(date);
+
             return d.toLocaleDateString();
         }
 
@@ -694,6 +696,7 @@ define(function(require){
          */
         function updateTitle(min, max) {
             const title = formatDate(min.date) + ' - ' + formatDate(max.date);
+
             tooltipTitle.text(title);
         }
 
@@ -1106,13 +1109,13 @@ define(function(require){
         }
 
         function drawLegend() {
-            if(!isPrintMode)
+            if (!isPrintMode)
                 return;
             const pos = Number.parseInt(chartWidth) + Number.parseInt(margin.right);
 
             tooltipTextContainer = svg.selectAll('.legend-group')
                 .append('g')
-                .attr('transform', 'translate(' + pos + ", 0)")
+                .attr('transform', 'translate(' + pos + ', 0)')
                 .classed('tooltip-text', true);
 
             tooltipTitle = tooltipTextContainer
@@ -1141,9 +1144,11 @@ define(function(require){
 
             const uniqNames = [...new Set(data.map(o=>o.name))];
             const keys = [];
-            for(let i=0; i< uniqNames.length; i++){
+
+            for (let i=0; i< uniqNames.length; i++){
                 const item = {};
                 const name = uniqNames[i];
+
                 item.name = name;
                 item.sum = data.filter(o=>o.name === uniqNames[i])
                     .reduce((a, b)=>a + b.value, 0);
@@ -1153,8 +1158,10 @@ define(function(require){
             const min = dataByDate[0];
             const last = dataByDate.length - 1;
             const max = dataByDate[last];
+
             updateTitle(min, max);
             const total = keys.reduce((a, b)=>a + b.sum, 0);
+
             keys.forEach(updateTopicContent);
             updateTotal(total);
         }
@@ -1237,9 +1244,11 @@ define(function(require){
         function getAreaVisibility() {
             const names = uniq(data.map(o => o.name));
             const visibleAreas = {};
+
             names.forEach(n=>{
                 const needle = data.find(o=>o.name === n);
-                if(needle.hasOwnProperty('show')){
+
+                if (needle.hasOwnProperty('show')){
                     visibleAreas[n] = needle.show;
                 } else {
                     // default for old data

@@ -21,8 +21,6 @@ lib-cov
 coverage
 
 # Builds and tooling
-.grunt
-Gruntfile.js
 .sass-cache
 .sass-lint.yml
 .travis.yml
