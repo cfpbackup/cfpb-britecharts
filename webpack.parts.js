@@ -78,12 +78,3 @@ exports.aliasD3ToVendorPath = () => ({
         }
     }
 });
-
-// Deprecated: devServer is now configured directly in webpack.config.js
-// Keeping this for backwards compatibility but it's not used anymore
-exports.devServer = (port) => ({
-    devServer: {
-        host: '0.0.0.0',
-        port,
-    }
-});
