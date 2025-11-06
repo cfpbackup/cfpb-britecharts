@@ -1,5 +1,6 @@
+
 const path = require('path');
-const merge = require('webpack-merge');
+const { merge } = require('webpack-merge');
 
 const parts = require('./webpack.parts');
 const constants = require('./webpack.constants');
@@ -7,7 +8,7 @@ const constants = require('./webpack.constants');
 const demosConfig = merge([
     {
         mode: 'development',
-        devtool: 'cheap-eval-source-map',
+        devtool: 'eval-cheap-source-map',
         entry: constants.DEMOS,
         output: {
             path: path.resolve(__dirname, './demos/build/'),
@@ -18,33 +19,29 @@ const demosConfig = merge([
             britecharts: 'britecharts'
         },
         devServer: {
-            // this is to allow the docs system to access otherwise inaccessible scripts
-            proxy: {
-                '/britecharts/scripts/common.js': {
-                    target: 'http://localhost:8001/',
-                    pathRewrite: {'^/britecharts/scripts/' : '/assets/'}
+            static: [
+                {
+                    directory: path.resolve(__dirname, './docs'),
+                    publicPath: '/',
                 },
-                '/britecharts/scripts/demo-*.js': {
-                    target: 'http://localhost:8001/',
-                    pathRewrite: {'^/britecharts/scripts/' : '/assets/'}
-                },
-                '/britecharts/scripts/*.js': {
-                    target: 'http://localhost:8001/',
-                    pathRewrite: {'^/britecharts/scripts/' : 'scripts/'}
-                },
-                '/britecharts/': {
-                    target: 'http://localhost:8001/',
-                    pathRewrite: {'^/britecharts/' : ''}
+                {
+                    directory: path.resolve(__dirname, './docs'),
+                    publicPath: '/britecharts',
                 }
+            ],
+            port: 8001,
+            hot: true,
+            host: '0.0.0.0',
+            allowedHosts: 'all',
+            headers: {
+                'Access-Control-Allow-Origin': '*',
             },
         },
         optimization: {
             minimize: false,
-            namedModules: true,
         },
     },
     parts.babelLoader(),
-    parts.devServer(8001),
 ]);
 
 const testConfig = merge([
@@ -66,7 +63,7 @@ const testConfig = merge([
 const sandboxConfig = merge([
     {
         mode: 'development',
-        devtool: 'cheap-eval-source-map',
+        devtool: 'eval-cheap-source-map',
         entry: {
             sandbox: path.resolve(__dirname, './sandbox/sandbox.js'),
         },
@@ -75,10 +72,18 @@ const sandboxConfig = merge([
             publicPath: '/assets/',
             filename: '[name].js',
         },
+        devServer: {
+            static: {
+                directory: path.resolve(__dirname, './sandbox'),
+            },
+            port: 8002,
+            hot: true,
+            host: '0.0.0.0',
+            allowedHosts: 'all',
+        },
     },
     parts.babelLoader(),
     parts.sassLoader(),
-    parts.devServer(8002),
 ]);
 
 const prodBundleConfig = merge([
@@ -91,8 +96,10 @@ const prodBundleConfig = merge([
         output: {
             path: path.resolve(__dirname, 'dist/bundled'),
             filename: 'britecharts.min.js',
-            library: ['britecharts'],
-            libraryTarget: 'umd'
+            library: {
+                name: 'britecharts',
+                type: 'umd'
+            }
         },
     },
     parts.babelLoader(),
@@ -110,8 +117,10 @@ const prodChartsConfig = merge([
         output: {
             path: path.resolve(__dirname, './dist/umd'),
             filename: '[name].min.js',
-            library: ['britecharts', '[name]'],
-            libraryTarget: 'umd'
+            library: {
+                name: ['britecharts', '[name]'],
+                type: 'umd'
+            }
         },
     },
     parts.babelLoader(),
@@ -125,19 +134,19 @@ module.exports = (env) => {
     // eslint-disable-next-line no-console
     console.log('%%%%%%%% env', env);
 
-    if (env === 'demos') {
+    if (env.demos || env === 'demos') {
         return demosConfig;
     }
 
-    if (env === 'test') {
+    if (env.test || env === 'test') {
         return testConfig;
     }
 
-    if (env === 'sandbox') {
+    if (env.sandbox || env === 'sandbox') {
         return sandboxConfig;
     }
 
-    if (env === 'production') {
+    if (env.production || env === 'production') {
         return [
             prodBundleConfig,
             prodChartsConfig

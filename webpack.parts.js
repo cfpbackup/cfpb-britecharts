@@ -1,3 +1,4 @@
+
 const webpack = require('webpack');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const constants = require('./webpack.constants');
@@ -23,7 +24,7 @@ exports.babelIstambulLoader = () => ({
                 exclude: /(node_modules|__tests__|tests_index.js)/,
                 use: [{
                     loader: 'istanbul-instrumenter-loader',
-                    query: {
+                    options: {
                         esModules: true
                     }
                 }],
@@ -78,6 +79,8 @@ exports.aliasD3ToVendorPath = () => ({
     }
 });
 
+// Deprecated: devServer is now configured directly in webpack.config.js
+// Keeping this for backwards compatibility but it's not used anymore
 exports.devServer = (port) => ({
     devServer: {
         host: '0.0.0.0',
