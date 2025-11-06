@@ -16,6 +16,6 @@
     "es2015",
     "visualization"
   ],
-  "homepage": "http://eventbrite.github.io/britecharts/",
+  "homepage": "http://localhost:8001/",
   "version": "2.9.8"
 }

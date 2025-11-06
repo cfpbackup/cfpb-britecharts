@@ -1,71 +1,104 @@
-#!/usr/bin/env node
 
 const fs = require('fs-extra');
 const path = require('path');
+const glob = require('glob');
 
-const syncTasks = [
-    {
-        name: 'scripts',
-        from: 'demos/build/',
-        to: 'docs/scripts/'
-    },
-    {
-        name: 'helpers',
-        from: 'demos/helpers/',
-        to: 'docs/scripts/'
-    },
-    {
-        name: 'styles',
-        from: 'demos/css/',
-        to: 'docs/styles/'
-    },
-    {
-        name: 'fonts',
-        from: 'src/doc/template/static/fonts/',
-        to: 'docs/fonts/'
-    },
-    {
-        name: 'manifest',
-        from: 'src/doc/template/manifest.json',
-        to: 'docs/manifest.json'
-    }
-];
+console.log('📋 Syncing documentation assets...');
 
-async function syncFiles() {
-    console.log('🔄 Syncing documentation files...\n');
+// Define paths
+const templateStaticPath = path.join(__dirname, '../node_modules/ink-docstrap/template/static');
+const docsPath = path.join(__dirname, '../docs');
+const docsScriptsPath = path.join(docsPath, 'scripts');
+const docsBritechartsScriptsPath = path.join(docsPath, 'britecharts/scripts');
+const demosPath = path.join(__dirname, '../demos');
+const demosBuildPath = path.join(demosPath, 'build');
 
-    for (const task of syncTasks) {
-        try {
-            const fromPath = path.resolve(task.from);
-            const toPath = path.resolve(task.to);
+// Ensure directories exist
+fs.ensureDirSync(docsScriptsPath);
+fs.ensureDirSync(docsBritechartsScriptsPath);
 
-            // Check if source exists
-            if (!fs.existsSync(fromPath)) {
-                console.log(`⚠️  Skipping ${task.name}: source not found (${fromPath})`);
-                continue;
+// Copy static files from template to both locations
+console.log('📦 Copying template static files...');
+try {
+    // Copy to /docs/scripts/
+    fs.copySync(templateStaticPath, docsScriptsPath, { overwrite: true });
+    console.log('  ✓ Copied to docs/scripts/');
+
+    // Copy to /docs/britecharts/scripts/
+    fs.copySync(templateStaticPath, docsBritechartsScriptsPath, { overwrite: true });
+    console.log('  ✓ Copied to docs/britecharts/scripts/');
+} catch (err) {
+    console.error('❌ Error copying static files:', err);
+    process.exit(1);
+}
+
+// Copy demo files to docs/britecharts/scripts/
+console.log('📦 Copying demo JavaScript files...');
+try {
+    if (fs.existsSync(demosBuildPath)) {
+        const demoFiles = fs.readdirSync(demosBuildPath);
+        demoFiles.forEach(file => {
+            if (file.endsWith('.js')) {
+                fs.copySync(
+                    path.join(demosBuildPath, file),
+                    path.join(docsBritechartsScriptsPath, file),
+                    { overwrite: true }
+                );
             }
-
-            // Create destination directory if it doesn't exist
-            const destDir = path.dirname(toPath);
-            await fs.ensureDir(destDir);
-
-            // Copy file or directory
-            await fs.copy(fromPath, toPath, { overwrite: true });
-            console.log(`✓ Synced ${task.name}: ${task.from} → ${task.to}`);
-        } catch (error) {
-            console.error(`✗ Error syncing ${task.name}:`, error.message);
-        }
+        });
+        console.log(`  ✓ Copied ${demoFiles.filter(f => f.endsWith('.js')).length} demo JavaScript files`);
     }
-
-    console.log('\n✅ Documentation sync complete!');
+} catch (err) {
+    console.error('❌ Error copying demo files:', err);
 }
 
-// Run if called directly
-if (require.main === module) {
-    syncFiles().catch(error => {
-        console.error('Sync failed:', error);
-        process.exit(1);
+// Copy demo HTML files to docs
+console.log('📦 Copying demo HTML files...');
+try {
+    const demoHtmlFiles = glob.sync(path.join(demosPath, '*.html'));
+    demoHtmlFiles.forEach(file => {
+        const fileName = path.basename(file);
+        const destPath = path.join(docsPath, `tutorial-${fileName}`);
+        fs.copySync(file, destPath, { overwrite: true });
     });
+    console.log(`  ✓ Copied ${demoHtmlFiles.length} demo HTML files as tutorial pages`);
+} catch (err) {
+    console.error('❌ Error copying demo HTML files:', err);
 }
 
-module.exports = syncFiles;
+// Copy demo CSS and JSON files
+console.log('📦 Copying demo assets...');
+try {
+    // Copy CSS
+    if (fs.existsSync(path.join(demosPath, 'css'))) {
+        fs.copySync(
+            path.join(demosPath, 'css'),
+            path.join(docsPath, 'css'),
+            { overwrite: true }
+        );
+    }
+    console.log('  ✓ Copied demo CSS');
+} catch (err) {
+    console.error('❌ Error copying demo assets:', err);
+}
+
+// Inject jQuery into all HTML files
+console.log('💉 Injecting jQuery...');
+const htmlFiles = glob.sync(path.join(docsPath, '**/*.html'));
+const jqueryScript = '<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>';
+
+let injectedCount = 0;
+htmlFiles.forEach(file => {
+    let content = fs.readFileSync(file, 'utf8');
+
+    // Only inject if jQuery is not already present
+    if (!content.includes('jquery') && !content.includes('jQuery')) {
+        // Insert jQuery before the closing </head> tag
+        content = content.replace('</head>', `    ${jqueryScript}\n</head>`);
+        fs.writeFileSync(file, content);
+        injectedCount++;
+    }
+});
+
+console.log(`  ✓ jQuery injected into ${injectedCount} HTML files`);
+console.log('✅ Documentation sync complete!');

@@ -1,4 +1,3 @@
-
 const path = require('path');
 const { merge } = require('webpack-merge');
 
@@ -27,6 +26,18 @@ const demosConfig = merge([
                 {
                     directory: path.resolve(__dirname, './docs'),
                     publicPath: '/britecharts',
+                },
+                {
+                    directory: path.resolve(__dirname, './demos'),
+                    publicPath: '/demos',
+                },
+                {
+                    directory: path.resolve(__dirname, './demos/build'),
+                    publicPath: '/assets/',
+                },
+                {
+                    directory: path.resolve(__dirname, './dist'),
+                    publicPath: '/dist/',
                 }
             ],
             port: 8001,
@@ -43,6 +54,7 @@ const demosConfig = merge([
     },
     parts.babelLoader(),
 ]);
+
 
 const testConfig = merge([
     {

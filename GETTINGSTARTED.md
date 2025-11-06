@@ -119,9 +119,9 @@ Check out our [Documentation Homepage][home] and our [kitchen sink][demos] to se
 If you are excited about Britecharts, want to add more configurable properties or even create your own chart, please check our [Contributing Guide][contribute]. In it, we walk you through the development environment setup, run our docs and demos and create new Pull Requests.
 
 
-[demos]: http://eventbrite.github.io/britecharts/tutorial-kitchen-sink.html
+[demos]: http://localhost:8001/demos/kitchen-sink.html
 [contribute]: https://github.com/eventbrite/britecharts/blob/master/.github/CONTRIBUTING.md
-[home]: http://eventbrite.github.io/britecharts/
-[cdnDemo]: https://eventbrite.github.io/britecharts/cdn.html
+[home]: http://localhost:8001/
+[cdnDemo]: http://localhost:8001/cdn.html
 [jsbinSandbox]: https://jsbin.com/wativun/1/edit?html,js,output
 [codepenSandbox]: https://codepen.io/Golodhros/pen/PprGeP?editors=1010
