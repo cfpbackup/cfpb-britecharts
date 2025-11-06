@@ -69,7 +69,6 @@ const testConfig = merge([
     },
     parts.babelLoader(),
     parts.aliasD3ToVendorPath(),
-    parts.babelIstambulLoader(),
 ]);
 
 const sandboxConfig = merge([
@@ -83,6 +82,17 @@ const sandboxConfig = merge([
             path: path.resolve(__dirname, './sandbox/build'),
             publicPath: '/assets/',
             filename: '[name].js',
+        },
+        resolve: {
+            fallback: {
+                "path": false,
+                "fs": false,
+                "os": false,
+                "crypto": false,
+                "stream": false,
+                "buffer": false,
+                "util": false
+            }
         },
         devServer: {
             static: {

@@ -1,4 +1,3 @@
-
 const fs = require('fs-extra');
 const path = require('path');
 const glob = require('glob');
@@ -6,7 +5,6 @@ const glob = require('glob');
 console.log('📋 Syncing documentation assets...');
 
 // Define paths
-const templateStaticPath = path.join(__dirname, '../node_modules/ink-docstrap/template/static');
 const docsPath = path.join(__dirname, '../docs');
 const docsScriptsPath = path.join(docsPath, 'scripts');
 const docsBritechartsScriptsPath = path.join(docsPath, 'britecharts/scripts');
@@ -16,21 +14,6 @@ const demosBuildPath = path.join(demosPath, 'build');
 // Ensure directories exist
 fs.ensureDirSync(docsScriptsPath);
 fs.ensureDirSync(docsBritechartsScriptsPath);
-
-// Copy static files from template to both locations
-console.log('📦 Copying template static files...');
-try {
-    // Copy to /docs/scripts/
-    fs.copySync(templateStaticPath, docsScriptsPath, { overwrite: true });
-    console.log('  ✓ Copied to docs/scripts/');
-
-    // Copy to /docs/britecharts/scripts/
-    fs.copySync(templateStaticPath, docsBritechartsScriptsPath, { overwrite: true });
-    console.log('  ✓ Copied to docs/britecharts/scripts/');
-} catch (err) {
-    console.error('❌ Error copying static files:', err);
-    process.exit(1);
-}
 
 // Copy demo files to docs/britecharts/scripts/
 console.log('📦 Copying demo JavaScript files...');
@@ -47,6 +30,8 @@ try {
             }
         });
         console.log(`  ✓ Copied ${demoFiles.filter(f => f.endsWith('.js')).length} demo JavaScript files`);
+    } else {
+        console.log('  ⚠️  Demos not built yet. Run "yarn demos:compile" first.');
     }
 } catch (err) {
     console.error('❌ Error copying demo files:', err);
@@ -76,8 +61,8 @@ try {
             path.join(docsPath, 'css'),
             { overwrite: true }
         );
+        console.log('  ✓ Copied demo CSS');
     }
-    console.log('  ✓ Copied demo CSS');
 } catch (err) {
     console.error('❌ Error copying demo assets:', err);
 }
@@ -102,3 +87,7 @@ htmlFiles.forEach(file => {
 
 console.log(`  ✓ jQuery injected into ${injectedCount} HTML files`);
 console.log('✅ Documentation sync complete!');
+
+module.exports = async function() {
+    return Promise.resolve();
+};

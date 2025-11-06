@@ -1,3 +1,4 @@
+
 {
     "source": {
         "include": ["src/charts"],
@@ -5,12 +6,22 @@
         "excludePattern": "(^|\\/|\\\\)_"
     },
     "opts": {
-        "template": "node_modules/ink-docstrap/template",
+        "template": "node_modules/docdash",
         "encoding": "utf8",
         "destination": "./docs",
         "recurse": true,
         "readme": "README.md",
         "tutorials": "src/doc/tutorials"
+    },
+    "docdash": {
+        "static": true,
+        "sort": true,
+        "search": true,
+        "collapse": true,
+        "wrap": true,
+        "typedefs": true,
+        "removeQuotes": "none",
+        "scripts": []
     },
     "templates": {
         "cleverLinks": false,

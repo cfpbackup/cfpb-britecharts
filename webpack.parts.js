@@ -14,24 +14,6 @@ exports.babelLoader = () => ({
     },
 });
 
-exports.babelIstambulLoader = () => ({
-    module: {
-        rules: [
-            {
-                test: /\.js?$/,
-                include: /src/,
-                exclude: /(node_modules|__tests__|tests_index.js)/,
-                use: [{
-                    loader: 'istanbul-instrumenter-loader',
-                    options: {
-                        esModules: true
-                    }
-                }],
-            }
-        ]
-    }
-});
-
 exports.bundleTreeChart = (analyzerPort = 8888) => ({
     plugins: [
         new BundleAnalyzerPlugin({

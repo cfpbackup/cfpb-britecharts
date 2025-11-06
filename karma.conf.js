@@ -1,3 +1,6 @@
+// At the top of the file
+process.env.BABEL_ENV = 'test';
+
 let webpackConfig = require('./webpack.config');
 
 webpackConfig.devtool = 'inline-source-map';
