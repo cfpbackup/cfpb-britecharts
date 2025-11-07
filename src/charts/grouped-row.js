@@ -4,7 +4,6 @@ define(function (require) {
     const d3Array = require('d3-array');
     const d3Axis = require('d3-axis');
     const d3Color = require('d3-color');
-    const d3Collection = require('d3-collection');
     const d3Dispatch = require('d3-dispatch');
     const d3Ease = require('d3-ease');
     const d3Format = require('d3-format');
@@ -52,7 +51,7 @@ define(function (require) {
      *
      * @module Grouped-row
      * @tutorial grouped-row
-     * @requires d3-array, d3-axis, d3-color, d3-collection, d3-dispatch, d3-ease,
+     * @requires d3-array, d3-axis, d3-color, d3-dispatch, d3-ease,
      *  d3-interpolate, d3-scale, d3-selection, lodash assign
      *
      * @example
@@ -864,7 +863,7 @@ define(function (require) {
          * @private
          */
         function getMousePosition(event) {
-            return d3Selection.mouse(event);
+            return d3Selection.pointer(event);
         }
 
         /**
@@ -944,7 +943,7 @@ define(function (require) {
             let [mouseX, mouseY] = getMousePosition(e);
             let dataPoint = getNearestDataPoint2(mouseY);
 
-            dispatcher.call('customClick', e, dataPoint, d3Selection.mouse(e));
+            dispatcher.call('customClick', e, dataPoint, d3Selection.pointer(e));
         }
 
         /**
@@ -954,7 +953,7 @@ define(function (require) {
          */
         function handleMouseOut(e, d) {
             svg.select('.metadata-group').attr('transform', 'translate(9999, 0)');
-            dispatcher.call('customMouseOut', e, d, d3Selection.mouse(e));
+            dispatcher.call('customMouseOut', e, d, d3Selection.pointer(e));
         }
 
         /**
@@ -962,7 +961,7 @@ define(function (require) {
          * @private
          */
         function handleMouseOver(e, d) {
-            dispatcher.call('customMouseOver', e, d, d3Selection.mouse(e));
+            dispatcher.call('customMouseOver', e, d, d3Selection.pointer(e));
 
             // eyeball fill-opacity
             rowHoverOver(d);
@@ -1060,27 +1059,25 @@ define(function (require) {
         function prepareData(data) {
             groups = uniq(data.map((d) => getGroup(d)));
             names = uniq(data.map((d) => getName(d)));
-            transformedData = d3Collection.nest()
-                .key(getName)
-                .rollup(function (values) {
-                    let ret = {};
+            const groupedData = d3Array.group(data, getName);
 
-                    values.forEach((entry) => {
-                        if (entry && entry[groupLabel]) {
-                            ret[entry[groupLabel]] = getValue(entry);
-                        }
-                    });
-                    //for tooltip
-                    ret.values = values;
-                    return ret;
-                })
-                .entries(data)
-                .map(function (data) {
-                    return assign({}, {
-                        total: d3Array.sum(d3Array.permute(data.value, groups)),
-                        key: data.key
-                    }, data.value);
+            transformedData = Array.from(groupedData, ([key, values]) => {
+                let ret = {};
+
+                values.forEach((entry) => {
+                    if (entry && entry[groupLabel]) {
+                        ret[entry[groupLabel]] = getValue(entry);
+                    }
                 });
+
+                // for tooltip
+                ret.values = values;
+
+                return assign({}, {
+                    total: d3Array.sum(d3Array.permute(ret, groups)),
+                    key: key
+                }, ret);
+            });
         }
 
         /**

@@ -3,7 +3,6 @@ define(function(require){
 
     const d3Array = require('d3-array');
     const d3Axis = require('d3-axis');
-    const d3Collection = require('d3-collection');
     const d3Dispatch = require('d3-dispatch');
     const d3Ease = require('d3-ease');
     const d3Scale = require('d3-scale');
@@ -64,7 +63,7 @@ define(function(require){
      *
      * @module Stacked-area
      * @tutorial stacked-area
-     * @requires d3-array, d3-axis, d3-collection, d3-ease, d3-scale, d3-shape, d3-selection, d3-time, d3-time-format
+     * @requires d3-array, d3-axis, d3-ease, d3-scale, d3-shape, d3-selection, d3-time, d3-time-format
      *
      * @example
      * let stackedArea = stackedArea();
@@ -1213,16 +1212,19 @@ define(function(require){
          * @private
          */
         function getDataByDate(data) {
-            return d3Collection.nest()
-                .key(getDate)
-                .entries(
-                    data.sort((a, b) => a.date - b.date)
-                )
-                .map(d => {
-                    return assign({}, d, {
-                        date: new Date(d.key)
-                    });
+            // Replace d3Collection.nest() with d3Array.group()
+            const groupedByDate = d3Array.group(
+                data.sort((a, b) => a.date - b.date),
+                getDate
+            );
+
+            return Array.from(groupedByDate, ([key, values]) => {
+                return assign({}, {
+                    key,
+                    values,
+                    date: new Date(key)
                 });
+            });
         }
 
         /**
@@ -1290,7 +1292,7 @@ define(function(require){
         function handleMouseMove(e) {
             epsilon || setEpsilon();
 
-            let [xPosition, yPosition] = d3Selection.mouse(e),
+            let [xPosition, yPosition] = d3Selection.pointer(e),
                 dataPoint = getNearestDataPoint(xPosition - margin.left),
                 dataPointXPosition;
 
@@ -1334,7 +1336,7 @@ define(function(require){
             verticalMarkerLine.classed('bc-is-active', false);
             // don't hide vertical marker
             //verticalMarkerContainer.attr('transform', 'translate(9999, 0)');
-            dispatcher.call('customMouseOut', e, d, d3Selection.mouse(e));
+            dispatcher.call('customMouseOut', e, d, d3Selection.pointer(e));
         }
 
         /**
@@ -1345,7 +1347,7 @@ define(function(require){
             overlay.style('display', 'block');
             verticalMarkerLine.classed('bc-is-active', true);
 
-            dispatcher.call('customMouseOver', e, d, d3Selection.mouse(e));
+            dispatcher.call('customMouseOver', e, d, d3Selection.pointer(e));
         }
 
         /**
@@ -1363,7 +1365,7 @@ define(function(require){
          * @private
          */
         function handleHighlightClick(e, d) {
-            dispatcher.call('customDataEntryClick', e, d, d3Selection.mouse(e));
+            dispatcher.call('customDataEntryClick', e, d, d3Selection.pointer(e));
         }
 
         /**

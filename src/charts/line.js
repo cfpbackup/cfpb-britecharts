@@ -3,7 +3,6 @@ define(function(require){
 
     const d3Array = require('d3-array');
     const d3Axis = require('d3-axis');
-    const d3Collection = require('d3-collection');
     const d3Dispatch = require('d3-dispatch');
     const d3Ease = require('d3-ease');
     const d3Format = require('d3-format');
@@ -328,14 +327,14 @@ define(function(require){
          */
         function addMouseEvents() {
             svg
-                .on('mouseover', function(d) {
-                    handleMouseOver(this, d);
+                .on('mouseover', function(event) {
+                    handleMouseOver(this, event);
                 })
-                .on('mouseout', function(d) {
-                    handleMouseOut(this, d);
+                .on('mouseout', function(event) {
+                    handleMouseOut(this, event);
                 })
-                .on('mousemove',  function(d) {
-                    handleMouseMove(this, d);
+                .on('mousemove',  function(event) {
+                    handleMouseMove(this, event);
                 });
         }
 
@@ -346,8 +345,8 @@ define(function(require){
          */
         function addTouchEvents() {
             svg
-                .on('touchmove', function(d) {
-                    handleTouchMove(this, d);
+                .on('touchmove', function(event) {
+                    handleTouchMove(this, event);
                 });
         }
 
@@ -532,15 +531,15 @@ define(function(require){
             }, []);
 
             // Nest data by date and format
-            dataByDate = d3Collection.nest()
-                .key(getDate)
-                .entries(flatData)
-                .map((d) => {
-                    return {
-                        date: new Date(d.key),
-                        topics: d.values
-                    }
-                });
+            // Nest data by date and format using d3Array.group()
+            const groupedByDate = d3Array.group(flatData, getDate);
+
+            dataByDate = Array.from(groupedByDate, ([key, values]) => {
+                return {
+                    date: new Date(key),
+                    topics: values
+                }
+            });
 
             // Normalize dates in keys
             dataByDate = dataByDate.map((d) => {
@@ -1101,20 +1100,17 @@ define(function(require){
          * and updates metadata related to it
          * @private
          */
-        function handleMouseMove(e){
-            let [xPosition, yPosition] = d3Selection.mouse(e),
-                xPositionOffset = -margin.left, //Arbitrary number, will love to know how to assess it
+        function handleMouseMove(element, event) {
+            let [xPosition, yPosition] = d3Selection.pointer(event, element),
+                xPositionOffset = -margin.left,
                 dataPoint = getNearestDataPoint(xPosition + xPositionOffset),
                 dataPointXPosition;
 
             if (dataPoint) {
                 dataPointXPosition = xScale(new Date(dataPoint.date));
-                // More verticalMarker to that datapoint
                 moveVerticalMarker(dataPointXPosition);
-                // Add data points highlighting
                 highlightDataPoints(dataPoint);
-                // Emit event with xPosition for tooltip or similar feature
-                dispatcher.call('customMouseMove', e, dataPoint, topicColorMap, dataPointXPosition, yPosition);
+                dispatcher.call('customMouseMove', element, dataPoint, topicColorMap, dataPointXPosition, yPosition);
             }
         }
 
@@ -1141,21 +1137,21 @@ define(function(require){
          * It also resets the container of the vertical marker
          * @private
          */
-        function handleMouseOut(e, d){
+        function handleMouseOut(element, event) {
             overlay.style('display', 'none');
             verticalMarkerLine.classed('bc-is-active', false);
-            dispatcher.call('customMouseOut', e, d, d3Selection.mouse(e));
+            dispatcher.call('customMouseOut', element, event, d3Selection.pointer(event, element));
         }
 
         /**
          * Mouseover handler, shows overlay and adds active class to verticalMarkerLine
          * @private
          */
-        function handleMouseOver(e, d){
+        function handleMouseOver(element, event) {
             overlay.style('display', 'block');
             verticalMarkerLine.classed('bc-is-active', true);
 
-            dispatcher.call('customMouseOver', e, d, d3Selection.mouse(e));
+            dispatcher.call('customMouseOver', element, event, d3Selection.pointer(event, element));
         }
 
         /**
@@ -1163,17 +1159,16 @@ define(function(require){
          * It will only pass the information with the event
          * @private
          */
-        function handleHighlightClick(e, d) {
-            dispatcher.call('customDataEntryClick', e, d, d3Selection.mouse(e));
+        function handleHighlightClick(element, event, d) {
+            dispatcher.call('customDataEntryClick', element, d, d3Selection.pointer(event, element));
         }
-
         /**
          * Touchmove highlighted points
          * It will only pass the information with the event
          * @private
          */
-        function handleTouchMove(e, d) {
-            dispatcher.call('customTouchMove', e, d, d3Selection.touch(e));
+        function handleTouchMove(element, event) {
+            dispatcher.call('customTouchMove', element, event, d3Selection.pointer(event, element));
         }
 
         /**
@@ -1228,11 +1223,11 @@ define(function(require){
                                     })
                                     .style('stroke', topicColorMap[d.name])
                                     .style('cursor', 'pointer')
-                                    .on('click', function () {
+                                    .on('click', function (event, d) {
                                         addGlowFilter(this);
-                                        handleHighlightClick(this, d);
+                                        handleHighlightClick(this, event, d);
                                     })
-                                    .on('mouseout', function () {
+                                    .on('mouseout', function (event) {
                                         removeFilter(this);
                                     });
 

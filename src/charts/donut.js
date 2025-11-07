@@ -415,7 +415,7 @@ define(function(require) {
          */
         function handleMouseOver(el, d, chartWidth, chartHeight) {
             drawLegend(d);
-            dispatcher.call('customMouseOver', el, d, d3Selection.mouse(el), [chartWidth, chartHeight]);
+            dispatcher.call('customMouseOver', el, d, d3Selection.pointer(el), [chartWidth, chartHeight]);
 
             if (hasHoverAnimation) {
                 // if the hovered slice is not the same as the last slice hovered
@@ -437,7 +437,7 @@ define(function(require) {
          * @private
          */
         function handleMouseMove(el, d, chartWidth, chartHeight) {
-            dispatcher.call('customMouseMove', el, d, d3Selection.mouse(el), [chartWidth, chartHeight]);
+            dispatcher.call('customMouseMove', el, d, d3Selection.pointer(el), [chartWidth, chartHeight]);
         }
 
         /**
@@ -467,7 +467,7 @@ define(function(require) {
                 lastHighlightedSlice = el;
             }
 
-            dispatcher.call('customMouseOut', el, d, d3Selection.mouse(el), [chartWidth, chartHeight]);
+            dispatcher.call('customMouseOut', el, d, d3Selection.pointer(el), [chartWidth, chartHeight]);
         }
 
         /**
@@ -476,7 +476,7 @@ define(function(require) {
          * @private
          */
         function handleClick(el, d, chartWidth, chartHeight) {
-            dispatcher.call('customClick', el, d, d3Selection.mouse(el), [chartWidth, chartHeight]);
+            dispatcher.call('customClick', el, d, d3Selection.pointer(el), [chartWidth, chartHeight]);
         }
 
         /**

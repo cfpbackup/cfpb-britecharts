@@ -3,7 +3,6 @@ define(function(require) {
 
     const d3Array = require('d3-array');
     const d3Axis = require('d3-axis');
-    const d3Collection = require('d3-collection');
     const d3Dispatch = require('d3-dispatch');
     const d3Ease = require('d3-ease');
     const d3Format = require('d3-format');
@@ -12,7 +11,7 @@ define(function(require) {
     const d3Selection = require('d3-selection');
     const d3Transition = require('d3-transition');
     const d3TimeFormat = require('d3-time-format');
-    const d3Voronoi = require('d3-voronoi');
+    const d3Delaunay = require('d3-delaunay');
 
     const {exportChart} = require('./helpers/export');
     const colorHelper = require('./helpers/color');
@@ -284,13 +283,14 @@ define(function(require) {
          * @private
          */
         function buildVoronoi() {
-            voronoi = d3Voronoi.voronoi()
-                .x((d) => xScale(d.x))
-                .y((d) => yScale(d.y))
-                .extent([
-                    [0, 0],
-                    [chartWidth, chartHeight]
-                ])(dataPoints);
+            // Replace d3Voronoi.voronoi() with d3Delaunay.Delaunay
+            const delaunay = d3Delaunay.Delaunay.from(
+                dataPoints,
+                (d) => xScale(d.x),
+                (d) => yScale(d.y)
+            );
+
+            voronoi = delaunay.voronoi([0, 0, chartWidth, chartHeight]);
         }
 
         /**
@@ -714,13 +714,17 @@ define(function(require) {
          * @private
          */
         function getPointProps(svg) {
-            let mousePos = d3Selection.mouse(svg);
+            let mousePos = d3Selection.pointer(svg);
 
             mousePos[0] -= margin.left;
             mousePos[1] -= margin.top;
 
+            // Replace voronoi.find() with voronoi.delaunay.find()
+            const pointIndex = voronoi.delaunay.find(mousePos[0], mousePos[1]);
+            const closestPoint = dataPoints[pointIndex];
+
             return {
-                closestPoint: voronoi.find(mousePos[0], mousePos[1]),
+                closestPoint,
                 mousePos
             };
         }
@@ -740,7 +744,7 @@ define(function(require) {
 
             highlightDataPoint(pointData);
 
-            dispatcher.call('customMouseMove', e, pointData, d3Selection.mouse(e), [chartWidth, chartHeight]);
+            dispatcher.call('customMouseMove', e, pointData, d3Selection.pointer(e), [chartWidth, chartHeight]);
         }
 
         /**
@@ -749,7 +753,7 @@ define(function(require) {
          * @private
          */
         function handleMouseOver (e, d) {
-            dispatcher.call('customMouseOver', e, d, d3Selection.mouse(e));
+            dispatcher.call('customMouseOver', e, d, d3Selection.pointer(e));
         }
 
         /**
@@ -763,7 +767,7 @@ define(function(require) {
             if (hasCrossHairs) {
                 showCrossHairComponentsWithLabels(false);
             }
-            dispatcher.call('customMouseOut', e, d, d3Selection.mouse(e));
+            dispatcher.call('customMouseOut', e, d, d3Selection.pointer(e));
         }
 
         /**
@@ -777,7 +781,7 @@ define(function(require) {
 
             handleClickAnimation(d);
 
-            dispatcher.call('customClick', e, d, d3Selection.mouse(e), [chartWidth, chartHeight]);
+            dispatcher.call('customClick', e, d, d3Selection.pointer(e), [chartWidth, chartHeight]);
         }
 
         /**

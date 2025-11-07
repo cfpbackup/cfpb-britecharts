@@ -783,7 +783,7 @@ define(function(require) {
          * @private
          */
         function handleMouseOver(e, d, barList, chartWidth, chartHeight) {
-            dispatcher.call('customMouseOver', e, d, d3Selection.mouse(e), [chartWidth, chartHeight]);
+            dispatcher.call('customMouseOver', e, d, d3Selection.pointer(e), [chartWidth, chartHeight]);
             highlightBarFunction = highlightBarFunction || function() {};
 
             if (hasSingleBarHighlight) {
@@ -805,7 +805,7 @@ define(function(require) {
          * @private
          */
         function handleMouseMove(e, d, chartWidth, chartHeight) {
-            dispatcher.call('customMouseMove', e, d, d3Selection.mouse(e), [chartWidth, chartHeight]);
+            dispatcher.call('customMouseMove', e, d, d3Selection.pointer(e), [chartWidth, chartHeight]);
         }
 
         /**
@@ -814,7 +814,7 @@ define(function(require) {
          * @private
          */
         function handleMouseOut(e, d, barList, chartWidth, chartHeight) {
-            dispatcher.call('customMouseOut', e, d, d3Selection.mouse(e), [chartWidth, chartHeight]);
+            dispatcher.call('customMouseOut', e, d, d3Selection.pointer(e), [chartWidth, chartHeight]);
 
             barList.forEach((barRect) => {
                 d3Selection.select(barRect).attr('fill', ({name}) => computeColor(name));
@@ -827,7 +827,7 @@ define(function(require) {
          * @private
          */
         function handleClick(e, d, chartWidth, chartHeight) {
-            dispatcher.call('customClick', e, d, d3Selection.mouse(e), [chartWidth, chartHeight]);
+            dispatcher.call('customClick', e, d, d3Selection.pointer(e), [chartWidth, chartHeight]);
         }
 
         // API

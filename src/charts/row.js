@@ -1018,7 +1018,7 @@ define(function(require) {
             if (d.splitterText)
                 return;
 
-            dispatcher.call('customMouseOver', e, d, d3Selection.mouse(e), [chartWidth, chartHeight]);
+            dispatcher.call('customMouseOver', e, d, d3Selection.pointer(e), [chartWidth, chartHeight]);
 
             // eyeball fill-opacity
             rowHoverOver(d);
@@ -1078,7 +1078,7 @@ define(function(require) {
             // early exit if it's a separator row
             if (d.splitterText)
                 return;
-            dispatcher.call('customMouseMove', e, d, d3Selection.mouse(e), [chartWidth, chartHeight]);
+            dispatcher.call('customMouseMove', e, d, d3Selection.pointer(e), [chartWidth, chartHeight]);
         }
 
         /**
@@ -1090,7 +1090,7 @@ define(function(require) {
             // early exit if it's a separator row
             if (d.splitterText)
                 return;
-            dispatcher.call('customMouseOut', e, d, d3Selection.mouse(e), [chartWidth, chartHeight]);
+            dispatcher.call('customMouseOut', e, d, d3Selection.pointer(e), [chartWidth, chartHeight]);
 
             // eyeball fill-opacity 0
             rowHoverOut(d);
@@ -1107,7 +1107,7 @@ define(function(require) {
          * @private
          */
         function handleClick(e, d, chartWidth, chartHeight) {
-            dispatcher.call('customClick', e, d, d3Selection.mouse(e), [chartWidth, chartHeight]);
+            dispatcher.call('customClick', e, d, d3Selection.pointer(e), [chartWidth, chartHeight]);
         }
 
         // API
