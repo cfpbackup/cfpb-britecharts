@@ -222,26 +222,26 @@ define(function (require) {
         function addMouseEvents() {
             if (shouldShowTooltip()) {
                 svg
-                    .on('mouseover', function(d) {
-                        handleMouseOver(this, d);
+                    .on('mouseover', function(event) {
+                        handleMouseOver(this, event);
                     })
-                    .on('mouseout', function(d) {
-                        handleMouseOut(this, d);
+                    .on('mouseout', function(event) {
+                        handleMouseOut(this, event);
                     })
-                    .on('mousemove',  function(d) {
-                        handleMouseMove(this, d);
+                    .on('mousemove',  function(event) {
+                        handleMouseMove(this, event);
                     })
-                    .on('click',  function(d) {
-                        handleCustomClick(this, d);
+                    .on('click',  function(event) {
+                        handleCustomClick(this, event);
                     });
             }
 
             svg.selectAll('.row')
-                .on('mouseover', function(d) {
-                    handleRowsMouseOver(this, d);
+                .on('mouseover', function(event, d) {
+                    handleRowsMouseOver(this, event, d);
                 })
-                .on('mouseout', function(d) {
-                    handleRowsMouseOut(this, d);
+                .on('mouseout', function(event, d) {
+                    handleRowsMouseOut(this, event, d);
                 });
         }
 
@@ -778,17 +778,17 @@ define(function (require) {
                 .enter()
                 .append('rect')
                 .classed( 'bg-hover', true )
-                .on( 'click', function( d ) {
-                    handleCustomClick( this, d );
-                } )
+                .on('click', function(event, d) {
+                    handleCustomClick(this, event);
+                })
                 .attr('x', -margin.left)
                 .attr('y', (d) => yScale2(getGroup(d)))
                 .attr('height', yScale2.bandwidth() * groups.length + groups.length * 4)
                 .attr('width', chartWidth + margin.left)
                 .attr('fill', backgroundHoverColor)
                 .attr('fill-opacity', 0)
-                .on( 'mouseover', rowHoverOver )
-                .on( 'mouseout', rowHoverOut );
+                .on('mouseover', rowHoverOver)
+                .on('mouseout', rowHoverOut);
 
 
             if (isAnimated) {
@@ -862,8 +862,8 @@ define(function (require) {
          * @return {Number}       Position on the x axis of the mouse
          * @private
          */
-        function getMousePosition(event) {
-            return d3Selection.pointer(event);
+        function getMousePosition(element, event) {
+            return d3Selection.pointer(event, element);
         }
 
         /**
@@ -891,34 +891,37 @@ define(function (require) {
 
         /**
          * Handles a mouseover event on top of a row
-         * @param  {obj} e the fired event
+         * @param  {obj} element the DOM element
+         * @param  {obj} event the fired event
          * @param  {obj} d data of row
          * @return {void}
          */
-        function handleRowsMouseOver(e, d) {
-            d3Selection.select(e)
+        function handleRowsMouseOver(element, event, d) {
+            d3Selection.select(element)
                 .attr('fill', () => d3Color.color(categoryColorMap[d.group]).darker());
         }
 
         /**
          * Handles a mouseout event out of a row
-         * @param  {obj} e the fired event
+         * @param  {obj} element the DOM element
+         * @param  {obj} event the fired event
          * @param  {obj} d data of row
          * @return {void}
          */
-        function handleRowsMouseOut(e, d) {
-            d3Selection.select(e)
+        function handleRowsMouseOut(element, event, d) {
+            d3Selection.select(element)
                 .attr('fill', () => categoryColorMap[d.group])
         }
 
         /**
          * MouseMove handler, calculates the nearest dataPoint to the cursor
          * and updates metadata related to it
-         * @param  {obj} e the fired event
+         * @param  {obj} element the DOM element
+         * @param  {obj} event the fired event
          * @private
          */
-        function handleMouseMove(e) {
-            let [mouseX, mouseY] = getMousePosition(e),
+        function handleMouseMove(element, event) {
+            let [mouseX, mouseY] = getMousePosition(element, event),
                 dataPoint = getNearestDataPoint2(mouseY),
                 x,
                 y;
@@ -931,7 +934,7 @@ define(function (require) {
                 moveTooltipOriginXY(x, y);
 
                 // Emit event with xPosition for tooltip or similar feature
-                dispatcher.call('customMouseMove', e, dataPoint, categoryColorMap, x, y);
+                dispatcher.call('customMouseMove', element, dataPoint, categoryColorMap, x, y);
             }
         }
 
@@ -939,11 +942,11 @@ define(function (require) {
          * Click handler, shows data that was clicked and passes to the user
          * @private
          */
-        function handleCustomClick (e, d) {
-            let [mouseX, mouseY] = getMousePosition(e);
+        function handleCustomClick(element, event) {
+            let [mouseX, mouseY] = getMousePosition(element, event);
             let dataPoint = getNearestDataPoint2(mouseY);
 
-            dispatcher.call('customClick', e, dataPoint, d3Selection.pointer(e));
+            dispatcher.call('customClick', element, dataPoint, d3Selection.pointer(event, element));
         }
 
         /**
@@ -951,20 +954,20 @@ define(function (require) {
          * It also resets the container of the vertical marker
          * @private
          */
-        function handleMouseOut(e, d) {
+        function handleMouseOut(element, event) {
             svg.select('.metadata-group').attr('transform', 'translate(9999, 0)');
-            dispatcher.call('customMouseOut', e, d, d3Selection.pointer(e));
+            dispatcher.call('customMouseOut', element, event, d3Selection.pointer(event, element));
         }
 
         /**
          * Mouseover handler, shows overlay and adds active class to verticalMarkerLine
          * @private
          */
-        function handleMouseOver(e, d) {
-            dispatcher.call('customMouseOver', e, d, d3Selection.pointer(e));
+        function handleMouseOver(element, event) {
+            dispatcher.call('customMouseOver', element, event, d3Selection.pointer(event, element));
 
             // eyeball fill-opacity
-            rowHoverOver(d);
+            rowHoverOver.call(element, event);
         }
 
         function rowHoverOver(d, i) {
@@ -1113,16 +1116,16 @@ define(function (require) {
                     .attr('height', '50')
                     .attr('width', '50')
                     .attr('fill', backgroundHoverColor)
-                    .on( 'mouseover', rowHoverOver )
-                    .on('mouseout', rowHoverOut )
+                    .on('mouseover', rowHoverOver)
+                    .on('mouseout', rowHoverOut)
                     .attr('opacity', 0);
 
                 group.append( 'path' )
                     .attr('d', 'M 10,10 L 30,30 M 30,10 L 10,30')
                     .attr('stroke', '#0072ce')
                     .attr('stroke-width', '2')
-                    .on( 'mouseover', rowHoverOver )
-                    .on('mouseout', rowHoverOut );
+                    .on('mouseover', rowHoverOver)
+                    .on('mouseout', rowHoverOut);
 
             } );
         }

@@ -351,25 +351,25 @@ define(function(require) {
 
             let newSlices = slices.enter()
                 .append('g')
-                  .each(storeAngle)
-                  .each(reduceOuterRadius)
-                  .classed('arc', true)
-                  .append('path');
+                .each(storeAngle)
+                .each(reduceOuterRadius)
+                .classed('arc', true)
+                .append('path');
 
             if (isAnimated) {
                 newSlices.merge(slices)
                     .attr('fill', getSliceFill)
-                    .on('mouseover', function(d) {
-                        handleMouseOver(this, d, chartWidth, chartHeight);
+                    .on('mouseover', function(event, d) {
+                        handleMouseOver(this, event, d, chartWidth, chartHeight);
                     })
-                    .on('mousemove', function(d) {
-                        handleMouseMove(this, d, chartWidth, chartHeight);
+                    .on('mousemove', function(event, d) {
+                        handleMouseMove(this, event, d, chartWidth, chartHeight);
                     })
-                    .on('mouseout', function(d) {
-                        handleMouseOut(this, d, chartWidth, chartHeight);
+                    .on('mouseout', function(event, d) {
+                        handleMouseOut(this, event, d, chartWidth, chartHeight);
                     })
-                    .on('click', function(d) {
-                        handleClick(this, d, chartWidth, chartHeight);
+                    .on('click', function(event, d) {
+                        handleClick(this, event, d, chartWidth, chartHeight);
                     })
                     .transition()
                     .ease(ease)
@@ -379,17 +379,17 @@ define(function(require) {
                 newSlices.merge(slices)
                     .attr('fill', getSliceFill)
                     .attr('d', shape)
-                    .on('mouseover', function(d) {
-                        handleMouseOver(this, d, chartWidth, chartHeight);
+                    .on('mouseover', function(event, d) {
+                        handleMouseOver(this, event, d, chartWidth, chartHeight);
                     })
-                    .on('mousemove', function(d) {
-                        handleMouseMove(this, d, chartWidth, chartHeight);
+                    .on('mousemove', function(event, d) {
+                        handleMouseMove(this, event, d, chartWidth, chartHeight);
                     })
-                    .on('mouseout', function(d) {
-                        handleMouseOut(this, d, chartWidth, chartHeight);
+                    .on('mouseout', function(event, d) {
+                        handleMouseOut(this, event, d, chartWidth, chartHeight);
                     })
-                    .on('click', function(d) {
-                        handleClick(this, d, chartWidth, chartHeight);
+                    .on('click', function(event, d) {
+                        handleClick(this, event, d, chartWidth, chartHeight);
                     });
             }
 
@@ -413,9 +413,9 @@ define(function(require) {
          * @return {void}
          * @private
          */
-        function handleMouseOver(el, d, chartWidth, chartHeight) {
+        function handleMouseOver(el, event, d, chartWidth, chartHeight) {
             drawLegend(d);
-            dispatcher.call('customMouseOver', el, d, d3Selection.pointer(el), [chartWidth, chartHeight]);
+            dispatcher.call('customMouseOver', el, d, d3Selection.pointer(event, el), [chartWidth, chartHeight]);
 
             if (hasHoverAnimation) {
                 // if the hovered slice is not the same as the last slice hovered
@@ -436,8 +436,8 @@ define(function(require) {
          * @return {void}
          * @private
          */
-        function handleMouseMove(el, d, chartWidth, chartHeight) {
-            dispatcher.call('customMouseMove', el, d, d3Selection.pointer(el), [chartWidth, chartHeight]);
+        function handleMouseMove(el, event, d, chartWidth, chartHeight) {
+            dispatcher.call('customMouseMove', el, d, d3Selection.pointer(event, el), [chartWidth, chartHeight]);
         }
 
         /**
@@ -445,7 +445,7 @@ define(function(require) {
          * @return {void}
          * @private
          */
-        function handleMouseOut(el, d, chartWidth, chartHeight) {
+        function handleMouseOut(el, event, d, chartWidth, chartHeight) {
             cleanLegend();
 
             // When there is a fixed highlighted slice,
@@ -467,7 +467,7 @@ define(function(require) {
                 lastHighlightedSlice = el;
             }
 
-            dispatcher.call('customMouseOut', el, d, d3Selection.pointer(el), [chartWidth, chartHeight]);
+            dispatcher.call('customMouseOut', el, d, d3Selection.pointer(event, el), [chartWidth, chartHeight]);
         }
 
         /**
@@ -475,8 +475,8 @@ define(function(require) {
          * @return {void}
          * @private
          */
-        function handleClick(el, d, chartWidth, chartHeight) {
-            dispatcher.call('customClick', el, d, d3Selection.pointer(el), [chartWidth, chartHeight]);
+        function handleClick(el, event, d, chartWidth, chartHeight) {
+            dispatcher.call('customClick', el, d, d3Selection.pointer(event, el), [chartWidth, chartHeight]);
         }
 
         /**

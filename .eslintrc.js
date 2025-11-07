@@ -27,6 +27,12 @@ module.exports = {
         'default-case': 1,
         'dot-notation': 0,
         'guard-for-in': 1,
+        'indent': ['error', 4, {
+            'MemberExpression': 'off',
+            'CallExpression': {
+                'arguments': 'off'
+            }
+        }],
         'keyword-spacing': 1,
         'newline-after-var': 1,
         'no-alert': 2,

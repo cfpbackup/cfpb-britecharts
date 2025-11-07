@@ -183,17 +183,17 @@ define(function(require){
         function addMouseEvents() {
             if (shouldShowTooltip()){
                 svg
-                    .on('mouseover', function(d) {
-                        handleMouseOver(this, d);
+                    .on('mouseover', function(event) {
+                        handleMouseOver(this, event);
                     })
-                    .on('mouseout', function(d) {
-                        handleMouseOut(this, d);
+                    .on('mouseout', function(event) {
+                        handleMouseOut(this, event);
                     })
-                    .on('mousemove',  function(d) {
-                        handleMouseMove(this, d);
+                    .on('mousemove',  function(event) {
+                        handleMouseMove(this, event);
                     })
-                    .on('click',  function(d) {
-                        handleClick(this, d);
+                    .on('click',  function(event) {
+                        handleClick(this, event);
                     });
             }
 
@@ -668,8 +668,8 @@ define(function(require){
          * and updates metadata related to it
          * @private
          */
-        function handleMouseMove(e){
-            let [mouseX, mouseY] = getMousePosition(e),
+        function handleMouseMove(element, event) {
+            let [mouseX, mouseY] = getMousePosition(event),
                 dataPoint = isHorizontal ? getNearestDataPoint2(mouseY) : getNearestDataPoint(mouseX),
                 x,
                 y;
@@ -686,7 +686,7 @@ define(function(require){
                 moveTooltipOriginXY(x,y);
 
                 // Emit event with xPosition for tooltip or similar feature
-                dispatcher.call('customMouseMove', e, dataPoint, categoryColorMap, x, y);
+                dispatcher.call('customMouseMove', element, dataPoint, categoryColorMap, x, y);
             }
         }
 
@@ -696,11 +696,11 @@ define(function(require){
          * @private
          */
 
-         function handleClick(e) {
-            let [mouseX, mouseY] = getMousePosition(e);
+         function handleClick(element, event) {
+            let [mouseX, mouseY] = getMousePosition(event);
             let dataPoint = isHorizontal ? getNearestDataPoint2(mouseY) : getNearestDataPoint(mouseX);
 
-            dispatcher.call('customClick', e, dataPoint, d3Selection.pointer(e));
+            dispatcher.call('customClick', element, event, dataPoint, d3Selection.pointer(event, element));
          }
 
         /**
@@ -708,17 +708,17 @@ define(function(require){
          * It also resets the container of the vertical marker
          * @private
          */
-        function handleMouseOut(e, d) {
+        function handleMouseOut(element, event) {
             svg.select('.metadata-group').attr('transform', 'translate(9999, 0)');
-            dispatcher.call('customMouseOut', e, d, d3Selection.pointer(e));
+            dispatcher.call('customMouseOut', element, d3Selection.pointer(event, element));
         }
 
         /**
          * Mouseover handler, shows overlay and adds active class to verticalMarkerLine
          * @private
          */
-        function handleMouseOver(e, d) {
-            dispatcher.call('customMouseOver', e, d, d3Selection.pointer(e));
+        function handleMouseOver(element, event) {
+            dispatcher.call('customMouseOver', element, d3Selection.pointer(event, element));
         }
 
         /**

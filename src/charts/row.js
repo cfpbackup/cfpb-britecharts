@@ -645,9 +645,9 @@ define(function(require) {
 
             bargroups.append( 'rect' )
                 .attr( 'class', 'bg')
-                .on( 'click', function( d ) {
-                    handleClick( this, d, chartWidth, chartHeight );
-                } )
+                .on('click', function(event, d) {
+                    handleClick(this, event, d, chartWidth, chartHeight);
+                })
                 .attr( 'x', 0 )
                 .attr( 'y', function (d, i) {
                     return yScale(d.name) - a * d.width/2;	//center the bar on the tick
@@ -670,8 +670,8 @@ define(function(require) {
                 .attr( 'height', function (d) {
                     return a * d.width;	//`a` already accounts for both types of padding
                 } )
-                .on( 'mouseover', rowHoverOver )
-                .on( 'mouseout', rowHoverOut )
+                .on('mouseover', rowHoverOver)
+                .on('mouseout', rowHoverOut)
                 .attr( 'fill-opacity', 0)
                 .attr( 'fill', function(d) {
                     return d.splitterText ? '#fff' : backgroundHoverColor
@@ -701,18 +701,18 @@ define(function(require) {
             bargroups
                 .append( 'rect' )
                 .attr( 'class', 'pct' )
-                .on( 'mouseover', function( d, index, rowList ) {
-                    handleMouseOver( this, d, rowList, chartWidth, chartHeight );
-                } )
-                .on( 'mousemove', function( d ) {
-                    handleMouseMove( this, d, chartWidth, chartHeight );
-                } )
-                .on( 'mouseout', function( d, index, rowList ) {
-                    handleMouseOut( this, d, rowList, chartWidth, chartHeight );
-                } )
-                .on( 'click', function( d ) {
-                    handleClick( this, d, chartWidth, chartHeight );
-                } )
+                .on('mouseover', function(event, d) {
+                    handleMouseOver(this, event, d, chartWidth, chartHeight);
+                })
+                .on('mousemove', function(event, d) {
+                    handleMouseMove(this, event, d, chartWidth, chartHeight);
+                })
+                .on('mouseout', function(event, d) {
+                    handleMouseOut(this, event, d, chartWidth, chartHeight);
+                })
+                .on('click', function(event, d) {
+                    handleClick(this, event, d, chartWidth, chartHeight);
+                })
                 .attr( 'x', 0 )
                 .attr( 'y', function (d, i) {
                     return yScale(d.name) - a * d.width/2;
@@ -759,8 +759,8 @@ define(function(require) {
                             return `translate(-${textWidth}, 0)`;
                         }
                     } )
-                    .on( 'mouseover', rowHoverOver )
-                    .on('mouseout', rowHoverOut );
+                    .on('mouseover', rowHoverOver)
+                    .on('mouseout', rowHoverOut);
 
                 // append group so we can manipulate the size
                 const splitterRowGroup = splitterRows
@@ -778,8 +778,8 @@ define(function(require) {
                     .attr( 'height', function (d) {
                         return a * d.width;	//`a` already accounts for both types of padding
                     } )
-                    .on( 'mouseover', rowHoverOver )
-                    .on( 'mouseout', rowHoverOut )
+                    .on('mouseover', rowHoverOver)
+                    .on('mouseout', rowHoverOut)
                     .attr( 'width', chartWidth + margin.left )
                     .attr( 'fill', 'none' )
 
@@ -1014,44 +1014,54 @@ define(function(require) {
          * @return {void}
          * @private
          */
-        function handleMouseOver(e, d, rowList, chartWidth, chartHeight) {
+        function handleMouseOver(element, event, d, chartWidth, chartHeight) {
             if (d.splitterText)
                 return;
 
-            dispatcher.call('customMouseOver', e, d, d3Selection.pointer(e), [chartWidth, chartHeight]);
+            dispatcher.call('customMouseOver', element, d, d3Selection.pointer(event, element), [chartWidth, chartHeight]);
 
             // eyeball fill-opacity
             rowHoverOver(d);
-            highlightRowFunction(d3Selection.select(e));
+            highlightRowFunction(d3Selection.select(element));
 
         }
 
-        function rowHoverOver(d, i) {
+        function rowHoverOver(event, d) {
             // early exit if it's a separator row
-            if (d.splitterText)
+            if (d && d.splitterText)
                 return;
             // eyeball fill-opacity 1
             // we should find the index of the currently hovered over row
-            let ind = i;
+            let ind;
 
-            if (typeof d.name === 'string' || typeof d === 'string') {
+            if (d && (typeof d.name === 'string' || typeof d === 'string')) {
                 ind = d.name ? getIndex( d.name ) : getIndex( d );
+            }
+
+            // Safety check to ensure ind is a valid number
+            if (typeof ind !== 'number' || ind < 0) {
+                return;
             }
 
             d3Selection.select(containerRoot).select('.tick svg.visibility-' + ind).attr('opacity', 1);
             d3Selection.select(containerRoot).select('g.row_' + ind + ' .bg-hover').attr('fill-opacity', 1);
         }
 
-        function rowHoverOut(d, i) {
+        function rowHoverOut(event, d) {
             // early exit if it's a separator row
-            if (d.splitterText)
+            if (d && d.splitterText)
                 return;
             // eyeball fill-opacity 0
             // we should find the index of the currently hovered over row
-            let ind = i;
+            let ind;
 
-            if (typeof d.name === 'string' || typeof d === 'string') {
+            if (d && (typeof d.name === 'string' || typeof d === 'string')) {
                 ind = d.name ? getIndex( d.name ) : getIndex( d );
+            }
+
+            // Safety check to ensure ind is a valid number
+            if (typeof ind !== 'number' || ind < 0) {
+                return;
             }
 
             d3Selection.select(containerRoot).select('.tick svg.visibility-' + ind).attr('opacity', 0);
@@ -1074,11 +1084,11 @@ define(function(require) {
          * @return {void}
          * @private
          */
-        function handleMouseMove(e, d, chartWidth, chartHeight) {
+        function handleMouseMove(element, event, d, chartWidth, chartHeight) {
             // early exit if it's a separator row
             if (d.splitterText)
                 return;
-            dispatcher.call('customMouseMove', e, d, d3Selection.pointer(e), [chartWidth, chartHeight]);
+            dispatcher.call('customMouseMove', element, d, d3Selection.pointer(event, element), [chartWidth, chartHeight]);
         }
 
         /**
@@ -1086,18 +1096,18 @@ define(function(require) {
          * @return {void}
          * @private
          */
-        function handleMouseOut(e, d, rowList, chartWidth, chartHeight) {
+        function handleMouseOut(element, event, d, chartWidth, chartHeight) {
             // early exit if it's a separator row
             if (d.splitterText)
                 return;
-            dispatcher.call('customMouseOut', e, d, d3Selection.pointer(e), [chartWidth, chartHeight]);
+            dispatcher.call('customMouseOut', element, d, d3Selection.pointer(event, element), [chartWidth, chartHeight]);
 
             // eyeball fill-opacity 0
             rowHoverOut(d);
-            rowList.forEach((rowRect) => {
-                d3Selection.select(rowRect).attr('fill', ({name}) => {
-                    return name ? colorMap(name) : '';
-                });
+
+            // Update all rows to their original color
+            svg.selectAll('.pct').attr('fill', ({name}) => {
+                return name ? colorMap(name) : '';
             });
         }
 
@@ -1106,8 +1116,8 @@ define(function(require) {
          * @return {void}
          * @private
          */
-        function handleClick(e, d, chartWidth, chartHeight) {
-            dispatcher.call('customClick', e, d, d3Selection.pointer(e), [chartWidth, chartHeight]);
+        function handleClick(element, event, d, chartWidth, chartHeight) {
+            dispatcher.call('customClick', element, d, d3Selection.pointer(event, element), [chartWidth, chartHeight]);
         }
 
         // API

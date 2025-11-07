@@ -296,14 +296,14 @@ define(function(require){
          */
         function addMouseEvents() {
             svg
-                .on('mouseover', function(d) {
-                    handleMouseOver(this, d);
+                .on('mouseover', function(event) {
+                    handleMouseOver(this, event);
                 })
-                .on('mouseout', function(d) {
-                    handleMouseOut(this, d);
+                .on('mouseout', function(event) {
+                    handleMouseOut(this, event);
                 })
-                .on('mousemove',  function(d) {
-                    handleMouseMove(this, d);
+                .on('mousemove',  function(event) {
+                    handleMouseMove(this, event);
                 });
         }
 
@@ -314,8 +314,8 @@ define(function(require){
          */
         function addTouchEvents() {
             svg
-                .on('touchmove', function(d) {
-                    handleTouchMove(this, d);
+                .on('touchmove', function(event) {
+                    handleTouchMove(this, event);
                 });
         }
 
@@ -1289,10 +1289,10 @@ define(function(require){
          * and updates metadata related to it
          * @private
          */
-        function handleMouseMove(e) {
+        function handleMouseMove(element, event) {
             epsilon || setEpsilon();
 
-            let [xPosition, yPosition] = d3Selection.pointer(e),
+            let [xPosition, yPosition] = d3Selection.pointer(event, element),
                 dataPoint = getNearestDataPoint(xPosition - margin.left),
                 dataPointXPosition;
 
@@ -1303,7 +1303,7 @@ define(function(require){
                 // Add data points highlighting
                 highlightDataPoints(dataPoint);
                 // Emit event with xPosition for tooltip or similar feature
-                dispatcher.call('customMouseMove', e, dataPoint, categoryColorMap, dataPointXPosition, yPosition);
+                dispatcher.call('customMouseMove', element, dataPoint, categoryColorMap, dataPointXPosition, yPosition);
             }
         }
 
@@ -1331,23 +1331,23 @@ define(function(require){
          * It also resets the container of the vertical marker
          * @private
          */
-        function handleMouseOut(e, d) {
+        function handleMouseOut(element, event) {
             overlay.style('display', 'none');
             verticalMarkerLine.classed('bc-is-active', false);
             // don't hide vertical marker
             //verticalMarkerContainer.attr('transform', 'translate(9999, 0)');
-            dispatcher.call('customMouseOut', e, d, d3Selection.pointer(e));
+            dispatcher.call('customMouseOut', element, event, d3Selection.pointer(event, element));
         }
 
         /**
          * Mouseover handler, shows overlay and adds active class to verticalMarkerLine
          * @private
          */
-        function handleMouseOver(e, d) {
+        function handleMouseOver(element, event) {
             overlay.style('display', 'block');
             verticalMarkerLine.classed('bc-is-active', true);
 
-            dispatcher.call('customMouseOver', e, d, d3Selection.pointer(e));
+            dispatcher.call('customMouseOver', element, event, d3Selection.pointer(event, element));
         }
 
         /**
@@ -1355,8 +1355,8 @@ define(function(require){
          * It will only pass the information with the event
          * @private
          */
-        function handleTouchMove(e, d) {
-            dispatcher.call('customTouchMove', e, d, d3Selection.touch(e));
+        function handleTouchMove(element, event) {
+            dispatcher.call('customTouchMove', element, event, d3Selection.pointer(event, element));
         }
 
         /**
@@ -1364,8 +1364,8 @@ define(function(require){
          * It will only pass the information with the event
          * @private
          */
-        function handleHighlightClick(e, d) {
-            dispatcher.call('customDataEntryClick', e, d, d3Selection.pointer(e));
+        function handleHighlightClick(element, event) {
+            dispatcher.call('customDataEntryClick', element, event, d3Selection.pointer(event, element));
         }
 
         /**
@@ -1400,11 +1400,11 @@ define(function(require){
                             return hiddenAreaMap[key] ? areaOpacity : 0;
                         })
                         .style('cursor', 'pointer')
-                        .on('click', function() {
+                        .on('click', function(event, clickedData) {
                             addGlowFilter(this);
-                            handleHighlightClick(this, d);
+                            handleHighlightClick(this, event, d);
                         })
-                        .on('mouseout', function() {
+                        .on('mouseout', function(event) {
                             removeFilter(this);
                         });
 

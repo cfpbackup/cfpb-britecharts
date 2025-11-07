@@ -180,29 +180,28 @@ define(function (require) {
         function addMouseEvents() {
             if (shouldShowTooltip()) {
                 svg
-                    .on('mouseover', function(d) {
-                        handleMouseOver(this, d);
+                    .on('mouseover', function(event) {
+                        handleMouseOver(this, event);
                     })
-                    .on('mouseout', function(d) {
-                        handleMouseOut(this, d);
+                    .on('mouseout', function(event) {
+                        handleMouseOut(this, event);
                     })
-                    .on('mousemove',  function(d) {
-                        handleMouseMove(this, d);
+                    .on('mousemove',  function(event) {
+                        handleMouseMove(this, event);
                     })
-                    .on('click',  function(d) {
-                        handleCustomClick(this, d);
+                    .on('click',  function(event) {
+                        handleCustomClick(this, event);
                     });
             }
 
             svg.selectAll('.bar')
-                .on('mouseover', function(d) {
-                    handleBarsMouseOver(this, d);
+                .on('mouseover', function(event, d) {
+                    handleBarsMouseOver(this, event, d);
                 })
-                .on('mouseout', function(d) {
-                    handleBarsMouseOut(this, d);
+                .on('mouseout', function(event, d) {
+                    handleBarsMouseOut(this, event, d);
                 });
         }
-
         /**
          * Adjusts the position of the y axis' ticks
          * @param  {D3Selection} selection Y axis group
@@ -600,8 +599,8 @@ define(function (require) {
          * @return {Number}       Position on the x axis of the mouse
          * @private
          */
-        function getMousePosition(event) {
-            return d3Selection.pointer(event);
+        function getMousePosition(element, event) {
+            return d3Selection.pointer(event, element);
         }
 
         /**
@@ -653,34 +652,35 @@ define(function (require) {
 
         /**
          * Handles a mouseover event on top of a bar
-         * @param  {obj} e the fired event
+         * @param  {obj} element the DOM element
+         * @param  {obj} event the fired event
          * @param  {obj} d data of bar
          * @return {void}
          */
-        function handleBarsMouseOver(e, d) {
-            d3Selection.select(e)
+        function handleBarsMouseOver(element, event, d) {
+            d3Selection.select(element)
                 .attr('fill', () => d3Color.color(categoryColorMap[d.group]).darker());
         }
 
         /**
          * Handles a mouseout event out of a bar
-         * @param  {obj} e the fired event
+         * @param  {obj} element the DOM element
+         * @param  {obj} event the fired event
          * @param  {obj} d data of bar
          * @return {void}
          */
-        function handleBarsMouseOut(e, d) {
-            d3Selection.select(e)
+        function handleBarsMouseOut(element, event, d) {
+            d3Selection.select(element)
                 .attr('fill', () => categoryColorMap[d.group])
         }
 
         /**
          * MouseMove handler, calculates the nearest dataPoint to the cursor
          * and updates metadata related to it
-         * @param  {obj} e the fired event
          * @private
          */
-        function handleMouseMove(e) {
-            let [mouseX, mouseY] = getMousePosition(e),
+        function handleMouseMove(element, event) {
+            let [mouseX, mouseY] = getMousePosition(element, event),
                 dataPoint = isHorizontal ? getNearestDataPoint2(mouseY) : getNearestDataPoint(mouseX),
                 x,
                 y;
@@ -697,7 +697,7 @@ define(function (require) {
                 moveTooltipOriginXY(x, y);
 
                 // Emit event with xPosition for tooltip or similar feature
-                dispatcher.call('customMouseMove', e, dataPoint, categoryColorMap, x, y);
+                dispatcher.call('customMouseMove', element, dataPoint, categoryColorMap, x, y);
             }
         }
 
@@ -705,11 +705,11 @@ define(function (require) {
          * Click handler, shows data that was clicked and passes to the user
          * @private
          */
-        function handleCustomClick (e) {
-            let [mouseX, mouseY] = getMousePosition(e);
+        function handleCustomClick(element, event) {
+            let [mouseX, mouseY] = getMousePosition(element, event);
             let dataPoint = isHorizontal ? getNearestDataPoint2(mouseY) : getNearestDataPoint(mouseX);
 
-            dispatcher.call('customClick', e, dataPoint, d3Selection.pointer(e));
+            dispatcher.call('customClick', element, dataPoint, d3Selection.pointer(event, element));
         }
 
         /**
@@ -717,17 +717,17 @@ define(function (require) {
          * It also resets the container of the vertical marker
          * @private
          */
-        function handleMouseOut(e, d) {
+        function handleMouseOut(element, event) {
             svg.select('.metadata-group').attr('transform', 'translate(9999, 0)');
-            dispatcher.call('customMouseOut', e, d, d3Selection.pointer(e));
+            dispatcher.call('customMouseOut', element, event, d3Selection.pointer(event, element));
         }
 
         /**
          * Mouseover handler, shows overlay and adds active class to verticalMarkerLine
          * @private
          */
-        function handleMouseOver(e, d) {
-            dispatcher.call('customMouseOver', e, d, d3Selection.pointer(e));
+        function handleMouseOver(element, event) {
+            dispatcher.call('customMouseOver', element, event, d3Selection.pointer(event, element));
         }
 
         /**

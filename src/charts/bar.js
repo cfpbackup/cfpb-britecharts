@@ -474,25 +474,25 @@ define(function(require) {
         function drawHorizontalBars(bars) {
             // Enter + Update
             bars.enter()
-              .append('rect')
+                .append('rect')
                 .classed('bar', true)
                 .attr('y', chartHeight)
                 .attr('x', 0)
                 .attr('height', yScale.bandwidth())
                 .attr('width', ({value}) => xScale(value))
-                .on('mouseover', function(d, index, barList) {
-                    handleMouseOver(this, d, barList, chartWidth, chartHeight);
+                .on('mouseover', function(event, d) {
+                    handleMouseOver(this, event, d, chartWidth, chartHeight);
                 })
-                .on('mousemove', function(d) {
-                    handleMouseMove(this, d, chartWidth, chartHeight);
+                .on('mousemove', function(event, d) {
+                    handleMouseMove(this, event, d, chartWidth, chartHeight);
                 })
-                .on('mouseout', function(d, index, barList) {
-                    handleMouseOut(this, d, barList, chartWidth, chartHeight);
+                .on('mouseout', function(event, d) {
+                    handleMouseOut(this, event, d, chartWidth, chartHeight);
                 })
-                .on('click', function(d) {
-                    handleClick(this, d, chartWidth, chartHeight);
+                .on('click', function(event, d) {
+                    handleClick(this, event, d, chartWidth, chartHeight);
                 })
-              .merge(bars)
+                .merge(bars)
                 .attr('x', 0)
                 .attr('y', ({name}) => yScale(name))
                 .attr('height', yScale.bandwidth())
@@ -508,23 +508,23 @@ define(function(require) {
         function drawAnimatedHorizontalBars(bars) {
             // Enter + Update
             bars.enter()
-              .append('rect')
+                .append('rect')
                 .classed('bar', true)
                 .attr('x', 0)
                 .attr('y', chartHeight)
                 .attr('height', yScale.bandwidth())
                 .attr('width', ({value}) => xScale(value))
-                .on('mouseover', function(d, index, barList) {
-                    handleMouseOver(this, d, barList, chartWidth, chartHeight);
+                .on('mouseover', function(event, d) {
+                    handleMouseOver(this, event, d, chartWidth, chartHeight);
                 })
-                .on('mousemove', function(d) {
-                    handleMouseMove(this, d, chartWidth, chartHeight);
+                .on('mousemove', function(event, d) {
+                    handleMouseMove(this, event, d, chartWidth, chartHeight);
                 })
-                .on('mouseout', function(d, index, barList) {
-                    handleMouseOut(this, d, barList, chartWidth, chartHeight);
+                .on('mouseout', function(event, d) {
+                    handleMouseOut(this, event, d, chartWidth, chartHeight);
                 })
-                .on('click', function(d) {
-                    handleClick(this, d, chartWidth, chartHeight);
+                .on('click', function(event, d) {
+                    handleClick(this, event, d, chartWidth, chartHeight);
                 });
 
             bars
@@ -547,25 +547,25 @@ define(function(require) {
         function drawAnimatedVerticalBars(bars) {
             // Enter + Update
             bars.enter()
-              .append('rect')
+                .append('rect')
                 .classed('bar', true)
                 .attr('x', chartWidth)
                 .attr('y', ({value}) => yScale(value))
                 .attr('width', xScale.bandwidth())
                 .attr('height', ({value}) => chartHeight - yScale(value))
-                .on('mouseover', function(d, index, barList) {
-                    handleMouseOver(this, d, barList, chartWidth, chartHeight);
+                .on('mouseover', function(event, d) {
+                    handleMouseOver(this, event, d, chartWidth, chartHeight);
                 })
-                .on('mousemove', function(d) {
-                    handleMouseMove(this, d, chartWidth, chartHeight);
+                .on('mousemove', function(event, d) {
+                    handleMouseMove(this, event, d, chartWidth, chartHeight);
                 })
-                .on('mouseout', function(d, index, barList) {
-                    handleMouseOut(this, d, barList, chartWidth, chartHeight);
+                .on('mouseout', function(event, d) {
+                    handleMouseOut(this, event, d, chartWidth, chartHeight);
                 })
-                .on('click', function(d) {
-                    handleClick(this, d, chartWidth, chartHeight);
+                .on('click', function(event, d) {
+                    handleClick(this, event, d, chartWidth, chartHeight);
                 })
-              .merge(bars)
+                .merge(bars)
                 .attr('x', ({name}) => xScale(name))
                 .attr('width', xScale.bandwidth())
                 .attr('fill', ({name}) => computeColor(name))
@@ -585,25 +585,25 @@ define(function(require) {
         function drawVerticalBars(bars) {
             // Enter + Update
             bars.enter()
-              .append('rect')
+                .append('rect')
                 .classed('bar', true)
                 .attr('x', chartWidth)
                 .attr('y', ({value}) => yScale(value))
                 .attr('width', xScale.bandwidth())
                 .attr('height', ({value}) => chartHeight - yScale(value))
-                .on('mouseover', function(d, index, barList) {
-                    handleMouseOver(this, d, barList, chartWidth, chartHeight);
+                .on('mouseover', function(event, d) {
+                    handleMouseOver(this, event, d, chartWidth, chartHeight);
                 })
-                .on('mousemove', function(d) {
-                    handleMouseMove(this, d, chartWidth, chartHeight);
+                .on('mousemove', function(event, d) {
+                    handleMouseMove(this, event, d, chartWidth, chartHeight);
                 })
-                .on('mouseout', function(d, index, barList) {
-                    handleMouseOut(this, d, barList, chartWidth, chartHeight);
+                .on('mouseout', function(event, d) {
+                    handleMouseOut(this, event, d, chartWidth, chartHeight);
                 })
-                .on('click', function(d) {
-                    handleClick(this, d, chartWidth, chartHeight);
+                .on('click', function(event, d) {
+                    handleClick(this, event, d, chartWidth, chartHeight);
                 })
-              .merge(bars)
+                .merge(bars)
                 .attr('x', ({name}) => xScale(name))
                 .attr('y', ({value}) => yScale(value))
                 .attr('width', xScale.bandwidth())
@@ -782,17 +782,18 @@ define(function(require) {
          * @return {void}
          * @private
          */
-        function handleMouseOver(e, d, barList, chartWidth, chartHeight) {
-            dispatcher.call('customMouseOver', e, d, d3Selection.pointer(e), [chartWidth, chartHeight]);
+        function handleMouseOver(element, event, d, chartWidth, chartHeight) {
+            dispatcher.call('customMouseOver', element, d, d3Selection.pointer(event, element), [chartWidth, chartHeight]);
             highlightBarFunction = highlightBarFunction || function() {};
 
             if (hasSingleBarHighlight) {
-                highlightBarFunction(d3Selection.select(e));
+                highlightBarFunction(d3Selection.select(element));
                 return;
             }
 
+            const barList = svg.selectAll('.bar').nodes();
             barList.forEach(barRect => {
-                if (barRect === e) {
+                if (barRect === element) {
                     return;
                 }
                 highlightBarFunction(d3Selection.select(barRect));
@@ -804,8 +805,8 @@ define(function(require) {
          * @return {void}
          * @private
          */
-        function handleMouseMove(e, d, chartWidth, chartHeight) {
-            dispatcher.call('customMouseMove', e, d, d3Selection.pointer(e), [chartWidth, chartHeight]);
+        function handleMouseMove(element, event, d, chartWidth, chartHeight) {
+            dispatcher.call('customMouseMove', element, d, d3Selection.pointer(event, element), [chartWidth, chartHeight]);
         }
 
         /**
@@ -813,11 +814,13 @@ define(function(require) {
          * @return {void}
          * @private
          */
-        function handleMouseOut(e, d, barList, chartWidth, chartHeight) {
-            dispatcher.call('customMouseOut', e, d, d3Selection.pointer(e), [chartWidth, chartHeight]);
+        function handleMouseOut(element, event, d, chartWidth, chartHeight) {
+            dispatcher.call('customMouseOut', element, d, d3Selection.pointer(event, element), [chartWidth, chartHeight]);
 
-            barList.forEach((barRect) => {
-                d3Selection.select(barRect).attr('fill', ({name}) => computeColor(name));
+            svg.selectAll('.bar').each(function() {
+                d3Selection.select(this).attr('fill', function(barData) {
+                    return computeColor(barData.name);
+                });
             });
         }
 
@@ -826,8 +829,8 @@ define(function(require) {
          * @return {void}
          * @private
          */
-        function handleClick(e, d, chartWidth, chartHeight) {
-            dispatcher.call('customClick', e, d, d3Selection.pointer(e), [chartWidth, chartHeight]);
+        function handleClick(element, event, chartWidth, chartHeight) {
+            dispatcher.call('customClick', element, event, d3Selection.pointer(event, element), [chartWidth, chartHeight]);
         }
 
         // API
