@@ -218,17 +218,17 @@ define(function(require) {
          */
         function addMouseEvents() {
             svg
-                .on('mousemove', function (d) {
-                    handleMouseMove(this, d);
+                .on('mousemove', function (event) {
+                    handleMouseMove(this, event);
                 })
-                .on('mouseover', function (d) {
-                    handleMouseOver(this, d);
+                .on('mouseover', function (event) {
+                    handleMouseOver(this, event);
                 })
-                .on('mouseout', function(d) {
-                    handleMouseOut(this, d);
+                .on('mouseout', function(event) {
+                    handleMouseOut(this, event);
                 })
-                .on('click', function () {
-                    handleClick(this);
+                .on('click', function (event) {
+                    handleClick(this, event);
                 });
         }
 
@@ -709,12 +709,12 @@ define(function(require) {
 
         /**
          * Calculates and returns
-         * @param {*} svg
+         * @param {*} element
          * @return {Object}
          * @private
          */
-        function getPointProps(svg) {
-            let mousePos = d3Selection.pointer(svg);
+        function getPointProps(element) {
+            let mousePos = d3Selection.pointer(event, element);
 
             mousePos[0] -= margin.left;
             mousePos[1] -= margin.top;
@@ -734,17 +734,16 @@ define(function(require) {
          * @return {void}
          * @private
          */
-        function handleMouseMove(e) {
-            let { mousePos, closestPoint } = getPointProps(e);
-            let pointData = getPointData(closestPoint);
+        function handleMouseMove(element, event) {
+            let { mousePos, closestPoint } = getPointProps(element);
 
             if (hasCrossHairs) {
-                drawDataPointsValueHighlights(pointData);
+                drawDataPointsValueHighlights(closestPoint);
             }
 
-            highlightDataPoint(pointData);
+            highlightDataPoint(closestPoint);
 
-            dispatcher.call('customMouseMove', e, pointData, d3Selection.pointer(e), [chartWidth, chartHeight]);
+            dispatcher.call('customMouseMove', element, closestPoint, d3Selection.pointer(event, element), [chartWidth, chartHeight]);
         }
 
         /**
@@ -752,8 +751,8 @@ define(function(require) {
          * @return {void}
          * @private
          */
-        function handleMouseOver (e, d) {
-            dispatcher.call('customMouseOver', e, d, d3Selection.pointer(e));
+        function handleMouseOver(element, event) {
+            dispatcher.call('customMouseOver', element, getPointProps(element).closestPoint, d3Selection.pointer(event, element));
         }
 
         /**
@@ -761,13 +760,13 @@ define(function(require) {
          * @return {void}
          * @private
          */
-        function handleMouseOut(e, d) {
+        function handleMouseOut(element, event) {
             removePointHighlight();
 
             if (hasCrossHairs) {
                 showCrossHairComponentsWithLabels(false);
             }
-            dispatcher.call('customMouseOut', e, d, d3Selection.pointer(e));
+            dispatcher.call('customMouseOut', element, getPointProps(element).closestPoint, d3Selection.pointer(event, element));
         }
 
         /**
@@ -775,13 +774,12 @@ define(function(require) {
          * @return {void}
          * @private
          */
-        function handleClick(e) {
-            let { closestPoint } = getPointProps(e);
-            let d = getPointData(closestPoint);
+        function handleClick(element, event) {
+            let { closestPoint } = getPointProps(element);
 
-            handleClickAnimation(d);
+            handleClickAnimation(closestPoint);
 
-            dispatcher.call('customClick', e, d, d3Selection.pointer(e), [chartWidth, chartHeight]);
+            dispatcher.call('customClick', element, closestPoint, d3Selection.pointer(event, element), [chartWidth, chartHeight]);
         }
 
         /**

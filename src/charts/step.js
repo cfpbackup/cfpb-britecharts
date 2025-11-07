@@ -356,8 +356,8 @@ define(function(require) {
          * @return {void}
          * @private
          */
-        function handleMouseOver(e, d, chartWidth, chartHeight) {
-            dispatcher.call('customMouseOver', e, d, d3Selection.pointer(e), [chartWidth, chartHeight]);
+        function handleMouseOver(element, event, chartWidth, chartHeight) {
+            dispatcher.call('customMouseOver', element, event, d3Selection.pointer(event, element), [chartWidth, chartHeight]);
         }
 
         /**
@@ -365,8 +365,8 @@ define(function(require) {
          * @return {void}
          * @private
          */
-        function handleMouseMove(e, d, chartWidth, chartHeight) {
-            dispatcher.call('customMouseMove', e, d, d3Selection.pointer(e), [chartWidth, chartHeight]);
+        function handleMouseMove(element, event, chartWidth, chartHeight) {
+            dispatcher.call('customMouseMove', element, event, d3Selection.pointer(event, element), [chartWidth, chartHeight]);
         }
 
         /**
@@ -374,8 +374,8 @@ define(function(require) {
          * @return {void}
          * @private
          */
-        function handleMouseOut(e, d, chartWidth, chartHeight) {
-            dispatcher.call('customMouseOut', e, d, d3Selection.pointer(e), [chartWidth, chartHeight]);
+        function handleMouseOut(element, event, chartWidth, chartHeight) {
+            dispatcher.call('customMouseOut', element, event, d3Selection.pointer(element, event), [chartWidth, chartHeight]);
         }
 
         /**
