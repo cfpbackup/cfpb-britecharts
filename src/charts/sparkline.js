@@ -275,7 +275,7 @@ define(function(require){
                         .attr('width', 0)
                         .attr('height', height);
 
-                d3Selection.select(`#${maskingClipId} rect`)
+                maskingClip
                     .transition()
                     .ease(ease)
                     .duration(clipDuration)

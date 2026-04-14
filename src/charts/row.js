@@ -729,7 +729,7 @@ define(function(require) {
                     return d.parent ? 0.5 : 1;
                 } );
 
-            const backgroundRows = d3Selection.select( '.chart-group .bg' );
+            const backgroundRows = svg.select( '.chart-group .bg' );
 
             if (enableLabels && backgroundRows.node()) {
                 const bgWidth = backgroundRows.node().getBBox().x || backgroundRows.node().getBoundingClientRect().width;
